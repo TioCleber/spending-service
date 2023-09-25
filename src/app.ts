@@ -1,24 +1,19 @@
-import fastify, {
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
-} from "fastify";
+import fastify, { FastifyInstance } from 'fastify'
 
-import Routes from "./routes";
-import auth from "./middlewares/auth";
+import Routes from './routes'
 
 class App {
-  private app: FastifyInstance;
+  private app: FastifyInstance
 
   constructor() {
-    this.app = fastify();
-    this.routes();
+    this.app = fastify()
+    this.routes()
   }
 
   routes() {
-    const routes = new Routes();
+    const routes = new Routes()
 
-    this.app.register(() => routes.init(this.app));
+    this.app.register(() => routes.init(this.app))
   }
 
   listen() {
@@ -26,8 +21,8 @@ class App {
       .listen({
         port: 3333,
       })
-      .then(() => console.log(`server listen on localhost:${3333}`));
+      .then(() => console.log(`server listen on localhost:${3333}`))
   }
 }
 
-export default new App();
+export default new App()

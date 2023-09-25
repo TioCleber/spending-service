@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { FastifyRequest, FastifyReply } from "fastify";
-import { prisma } from "../lib/prisma";
+import { z } from 'zod'
+import { FastifyRequest, FastifyReply } from 'fastify'
+import { prisma } from '../lib/prisma'
 
 class SpendingController {
   async create(req: FastifyRequest, rep: FastifyReply) {
@@ -10,34 +10,34 @@ class SpendingController {
       institution: z.string(),
       value: z.number(),
       date: z.string(),
-    });
+    })
 
-    const body = bodySchema.parse(req.body);
+    const body = bodySchema.parse(req.body)
 
     try {
       await prisma.spending.create({
         data: body,
-      });
+      })
 
-      return rep.status(201).send({ message: "Spending created." });
+      return rep.status(201).send({ message: 'Spending created.' })
     } catch (err) {
-      return rep.status(500).send({ message: err || "Unexpected error." });
+      return rep.status(500).send({ message: err || 'Unexpected error.' })
     }
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
     const querySchema = z.object({
       id: z.string().uuid().optional(),
-    });
+    })
 
-    const { id } = querySchema.parse(req.query);
+    const { id } = querySchema.parse(req.query)
 
     const spending = await prisma.spending.findMany({
       where: {
         userId: id ?? req.id,
       },
       orderBy: {
-        date: "desc",
+        date: 'desc',
       },
       select: {
         id: true,
@@ -53,13 +53,13 @@ class SpendingController {
           },
         },
       },
-    });
+    })
 
     if (!spending.length) {
-      return rep.status(404).send({ message: "No existing expenses." });
+      return rep.status(404).send({ message: 'No existing expenses.' })
     }
 
-    return spending;
+    return spending
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {
@@ -68,14 +68,14 @@ class SpendingController {
       institution: z.string().optional(),
       value: z.number().optional(),
       date: z.string().optional(),
-    });
+    })
 
     const paramsSchema = z.object({
       id: z.string().uuid(),
-    });
+    })
 
-    const { id } = paramsSchema.parse(req.params);
-    const body = bodySchema.parse(req.body);
+    const { id } = paramsSchema.parse(req.params)
+    const body = bodySchema.parse(req.body)
 
     try {
       await prisma.spending.update({
@@ -83,33 +83,33 @@ class SpendingController {
           id,
         },
         data: { ...body },
-      });
+      })
 
-      return rep.status(201).send({ message: "Spending updated." });
+      return rep.status(201).send({ message: 'Spending updated.' })
     } catch (err) {
-      return rep.status(500).send({ message: err || "Unexpected error." });
+      return rep.status(500).send({ message: err || 'Unexpected error.' })
     }
   }
 
   async delete(req: FastifyRequest, rep: FastifyReply) {
     const paramsSchema = z.object({
       id: z.string().uuid(),
-    });
+    })
 
-    const { id } = paramsSchema.parse(req.params);
+    const { id } = paramsSchema.parse(req.params)
 
     try {
       await prisma.spending.delete({
         where: {
           id,
         },
-      });
+      })
 
-      return rep.status(200).send({ message: "Spending deleted." });
+      return rep.status(200).send({ message: 'Spending deleted.' })
     } catch (err) {
-      return rep.status(500).send({ message: err || "Unexpected error." });
+      return rep.status(500).send({ message: err || 'Unexpected error.' })
     }
   }
 }
 
-export default new SpendingController();
+export default new SpendingController()
