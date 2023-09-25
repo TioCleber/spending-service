@@ -9,7 +9,7 @@
     "prisma:studio": "prisma studio",
     "build:ts": "tsup src",
     "start": "node dist/server.js",
-    "build:prod": "tsup src & node dist/server.js"
+    "build:prod": "node dist/server.js & tsup src"
   },
   "keywords": [],
   "author": "",
