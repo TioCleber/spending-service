@@ -1,0 +1,31 @@
+{
+  "name": "spending-service",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "ts-node-dev --exit-child --transpile-only --ignore-watch node_modules --respawn src/server.ts",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:reset": "prisma migrate reset",
+    "prisma:studio": "prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.4",
+    "@types/jsonwebtoken": "^9.0.3",
+    "@types/node": "^20.6.4",
+    "prisma": "^5.3.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@fastify/express": "^2.3.0",
+    "@fastify/middie": "^8.3.0",
+    "@prisma/client": "^5.3.1",
+    "bcryptjs": "^2.4.3",
+    "fastify": "^4.23.2",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.22.2"
+  }
+}
