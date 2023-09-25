@@ -57,6 +57,9 @@ class UsersController {
             date: true,
             value: true,
           },
+          orderBy: {
+            date: 'desc',
+          },
         },
       },
     })
