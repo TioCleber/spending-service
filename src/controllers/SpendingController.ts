@@ -32,7 +32,7 @@ class SpendingController {
       return rep.status(404).send({ message: 'No existing expenses.' })
     }
 
-    return spending
+    return rep.status(200).send(spending)
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {

@@ -3,8 +3,9 @@ import { FastifyInstance } from 'fastify'
 import UsersController from './controllers/UsersController'
 import SpendingController from './controllers/SpendingController'
 import SessionsController from './controllers/SessionsController'
-import { handleAuthMiddleware } from './utils/handleAuthMiddleware'
 import ExpensesController from './controllers/ExpensesController'
+import { tokens } from './middlewares/tokens'
+import auth from './middlewares/auth'
 
 class Routes {
   async init(app: FastifyInstance) {
@@ -15,15 +16,23 @@ class Routes {
   }
 
   get(app: FastifyInstance) {
-    app.register(async (instance) => {
-      handleAuthMiddleware(instance, 'preHandler')
+    app.get(
+      '/v1/pvt/profile',
+      { preHandler: [tokens, auth.authentication] },
+      UsersController.get
+    )
 
-      instance.get('/v1/pvt/profile', UsersController.get)
+    app.get(
+      '/v1/pvt/spending',
+      { preHandler: [tokens, auth.authentication] },
+      SpendingController.get
+    )
 
-      instance.get('/v1/pvt/spending', SpendingController.get)
-
-      instance.get('/v1/pvt/expenses', ExpensesController.get)
-    })
+    app.get(
+      '/v1/pvt/expenses',
+      { preHandler: [tokens, auth.authentication] },
+      ExpensesController.get
+    )
   }
 
   post(app: FastifyInstance) {
@@ -31,37 +40,57 @@ class Routes {
 
     app.post('/v1/pub/users', UsersController.create)
 
-    app.register(async (instance) => {
-      handleAuthMiddleware(instance, 'preHandler')
+    app.post(
+      '/v1/pvt/spending',
+      { preHandler: [tokens, auth.authentication] },
+      SpendingController.create
+    )
 
-      instance.post('/v1/pvt/spending', SpendingController.create)
-
-      instance.post('/v1/pvt/expenses', ExpensesController.create)
-    })
+    app.post(
+      '/v1/pvt/expenses',
+      { preHandler: [tokens, auth.authentication] },
+      ExpensesController.create
+    )
   }
 
   put(app: FastifyInstance) {
-    app.register(async (instance) => {
-      handleAuthMiddleware(instance, 'preHandler')
+    app.put(
+      '/v1/pvt/users/:id',
+      { preHandler: [tokens, auth.authentication] },
+      UsersController.put
+    )
 
-      instance.put('/v1/pvt/users/:id', UsersController.put)
+    app.put(
+      '/v1/pvt/spending/:id',
+      { preHandler: [tokens, auth.authentication] },
+      SpendingController.put
+    )
 
-      instance.put('/v1/pvt/spending/:id', SpendingController.put)
-
-      instance.put('/v1/pvt/expenses/:id', ExpensesController.put)
-    })
+    app.put(
+      '/v1/pvt/expenses/:id',
+      { preHandler: [tokens, auth.authentication] },
+      ExpensesController.put
+    )
   }
 
   delete(app: FastifyInstance) {
-    app.register(async (instance) => {
-      handleAuthMiddleware(instance, 'preHandler')
+    app.delete(
+      '/v1/pvt/users/:id',
+      { preHandler: [tokens, auth.authentication] },
+      UsersController.delete
+    )
 
-      instance.delete('/v1/pvt/users/:id', UsersController.delete)
+    app.delete(
+      '/v1/pvt/spending/:id',
+      { preHandler: [tokens, auth.authentication] },
+      SpendingController.delete
+    )
 
-      instance.delete('/v1/pvt/spending/:id', SpendingController.delete)
-
-      instance.delete('/v1/pvt/expenses/:id', ExpensesController.delete)
-    })
+    app.delete(
+      '/v1/pvt/expenses/:id',
+      { preHandler: [tokens, auth.authentication] },
+      ExpensesController.delete
+    )
   }
 }
 

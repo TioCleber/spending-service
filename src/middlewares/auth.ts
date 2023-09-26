@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
-import { FastifyRequest, FastifyReply } from 'fastify'
+import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify'
 import { SECRET } from '../config/config'
 
 interface TokenPayload {
@@ -13,7 +13,7 @@ class Auth {
   async authentication(
     req: FastifyRequest,
     rep: FastifyReply,
-    done: () => void
+    done: HookHandlerDoneFunction
   ) {
     const authHeader = req.headers.authorization as string
 

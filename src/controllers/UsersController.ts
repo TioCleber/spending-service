@@ -21,7 +21,7 @@ class UsersController {
 
     const { user } = await getUser(id ?? req.id)
 
-    return user
+    return rep.status(200).send(user)
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {
