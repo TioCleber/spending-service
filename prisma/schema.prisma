@@ -11,16 +11,18 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  firstName  String
-  lastName   String?
-  email      String   @unique
-  password   String
-  salary     Float?
-  moneySaved Float?
-  earnings   Float?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  id            String   @id @default(uuid())
+  firstName     String
+  lastName      String?
+  email         String   @unique
+  password      String
+  salary        Float?
+  moneySaved    Float?
+  earnings      Float?
+  totalSpent    Float    @default(0)
+  totalExpenses Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
 
   spending Spending[]
   expenses Expenses[]

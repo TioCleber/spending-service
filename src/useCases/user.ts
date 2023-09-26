@@ -33,6 +33,8 @@ export const getUser = async (id: string) => {
       earnings: true,
       moneySaved: true,
       salary: true,
+      totalExpenses: true,
+      totalSpent: true,
       expenses: {
         select: {
           id: true,
@@ -41,6 +43,8 @@ export const getUser = async (id: string) => {
           date: true,
           value: true,
         },
+        skip: 0,
+        take: 10,
         orderBy: {
           date: 'desc',
         },
@@ -54,6 +58,8 @@ export const getUser = async (id: string) => {
           value: true,
           paymentMethod: true,
         },
+        skip: 0,
+        take: 10,
         orderBy: {
           date: 'desc',
         },
