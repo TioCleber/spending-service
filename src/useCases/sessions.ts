@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import { SECRET } from '../config/config'
 import { ISessions } from '../types/ISessions'
 
-export const getSession = async ({ email, password }: ISessions) => {
+export const createSessions = async ({ email, password }: ISessions) => {
   const user = await prisma.user.findFirstOrThrow({
     where: {
       email: email,

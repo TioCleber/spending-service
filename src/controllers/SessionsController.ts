@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 
 import { sessionsSchema } from '../schemas/sessionsSchema'
-import { getSession } from '../useCases/sessions'
+import { createSessions } from '../useCases/sessions'
 
 class SessionsController {
   async create(req: FastifyRequest, rep: FastifyReply) {
@@ -9,7 +9,7 @@ class SessionsController {
 
     const { email, password } = bodySchema.parse(req.body)
 
-    const { response } = await getSession({ email, password })
+    const { response } = await createSessions({ email, password })
 
     return rep.status(200).send(response)
   }
