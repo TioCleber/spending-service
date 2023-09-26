@@ -1,59 +1,32 @@
-import { z } from 'zod'
-import { FastifyRequest, FastifyReply } from 'fastify'
 import { prisma } from '../database/prisma'
+import { FastifyRequest, FastifyReply } from 'fastify'
+
+import {
+  createSpending,
+  deleteSpending,
+  getSpending,
+  updateSpending,
+} from '../useCases/spending'
+
+import { paramsSchema } from '../schemas/paramsSchema'
+import { spendingSchema } from '../schemas/spendingSchema'
+import { querySchema } from '../schemas/querySchema'
 
 class SpendingController {
   async create(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = z.object({
-      userId: z.string().uuid(),
-      name: z.string(),
-      institution: z.string(),
-      value: z.number(),
-      date: z.string(),
-    })
+    const bodySchema = spendingSchema
 
     const body = bodySchema.parse(req.body)
 
-    try {
-      await prisma.spending.create({
-        data: body,
-      })
+    await createSpending(body)
 
-      return rep.status(201).send({ message: 'Spending created.' })
-    } catch (err) {
-      return rep.status(500).send({ message: err || 'Unexpected error.' })
-    }
+    return rep.status(201).send({ message: 'Spending created.' })
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const querySchema = z.object({
-      id: z.string().uuid().optional(),
-    })
-
     const { id } = querySchema.parse(req.query)
 
-    const spending = await prisma.spending.findMany({
-      where: {
-        userId: id ?? req.id,
-      },
-      orderBy: {
-        date: 'desc',
-      },
-      select: {
-        id: true,
-        date: true,
-        name: true,
-        institution: true,
-        value: true,
-        user: {
-          select: {
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-    })
+    const { spending } = await getSpending(id ?? req.id)
 
     if (!spending.length) {
       return rep.status(404).send({ message: 'No existing expenses.' })
@@ -63,52 +36,22 @@ class SpendingController {
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = z.object({
-      name: z.string().optional(),
-      institution: z.string().optional(),
-      value: z.number().optional(),
-      date: z.string().optional(),
-    })
-
-    const paramsSchema = z.object({
-      id: z.string().uuid(),
-    })
+    const bodySchema = spendingSchema
 
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
 
-    try {
-      await prisma.spending.update({
-        where: {
-          id,
-        },
-        data: { ...body },
-      })
+    await updateSpending(id, body)
 
-      return rep.status(201).send({ message: 'Spending updated.' })
-    } catch (err) {
-      return rep.status(500).send({ message: err || 'Unexpected error.' })
-    }
+    return rep.status(204)
   }
 
   async delete(req: FastifyRequest, rep: FastifyReply) {
-    const paramsSchema = z.object({
-      id: z.string().uuid(),
-    })
-
     const { id } = paramsSchema.parse(req.params)
 
-    try {
-      await prisma.spending.delete({
-        where: {
-          id,
-        },
-      })
+    await deleteSpending(id)
 
-      return rep.status(200).send({ message: 'Spending deleted.' })
-    } catch (err) {
-      return rep.status(500).send({ message: err || 'Unexpected error.' })
-    }
+    return rep.status(204)
   }
 }
 

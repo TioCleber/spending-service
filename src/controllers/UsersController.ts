@@ -1,13 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 
-import { getUser } from '../useCases/getUser'
-import { createUser } from '../useCases/createUser'
-import { updateUser } from '../useCases/updateUser'
-import { deleteUser } from '../useCases/deleteUser'
-
 import { createUSerSchema, updateUserSchema } from '../schemas/userSchemas'
 import { paramsSchema } from '../schemas/paramsSchema'
 import { querySchema } from '../schemas/querySchema'
+import { createUser, deleteUser, getUser, updateUser } from '../useCases/user'
 
 class UsersController {
   async create(req: FastifyRequest, rep: FastifyReply) {
@@ -40,7 +36,7 @@ class UsersController {
 
     await updateUser(id, body)
 
-    return rep.status(200).send({ message: 'User updated.' })
+    return rep.status(204)
   }
 
   async delete(req: FastifyRequest, rep: FastifyReply) {
@@ -48,7 +44,7 @@ class UsersController {
 
     await deleteUser(id)
 
-    return rep.status(200).send({ message: 'User deleted.' })
+    return rep.status(204)
   }
 }
 
