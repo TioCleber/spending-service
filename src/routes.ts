@@ -4,6 +4,7 @@ import UsersController from './controllers/UsersController'
 import SpendingController from './controllers/SpendingController'
 import SessionsController from './controllers/SessionsController'
 import { handleAuthMiddleware } from './utils/hooks'
+import ExpensesController from './controllers/ExpensesController'
 
 class Routes {
   async init(app: FastifyInstance) {
@@ -20,6 +21,8 @@ class Routes {
       instance.get('/profile', UsersController.get)
 
       instance.get('/spending', SpendingController.get)
+
+      instance.get('/expenses', ExpensesController.get)
     })
   }
 
@@ -32,6 +35,8 @@ class Routes {
       handleAuthMiddleware(instance, 'preHandler')
 
       instance.post('/spending', SpendingController.create)
+
+      instance.post('/expenses', ExpensesController.create)
     })
   }
 
@@ -42,6 +47,8 @@ class Routes {
       instance.put('/users/:id', UsersController.put)
 
       instance.put('/spending/:id', SpendingController.put)
+
+      instance.put('/expenses/:id', ExpensesController.put)
     })
   }
 
@@ -52,6 +59,8 @@ class Routes {
       instance.delete('/users/:id', UsersController.delete)
 
       instance.delete('/spending/:id', SpendingController.delete)
+
+      instance.delete('/expenses/:id', ExpensesController.delete)
     })
   }
 }
