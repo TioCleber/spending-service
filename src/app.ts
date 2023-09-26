@@ -2,7 +2,9 @@ import fastify, { FastifyInstance } from 'fastify'
 
 import Routes from './routes'
 import cors from '@fastify/cors'
+
 import { handleCors } from './utils/handlerCors'
+import { handleErrors } from './utils/handleErrors'
 
 class App {
   private app: FastifyInstance
@@ -26,17 +28,7 @@ class App {
   }
 
   errors() {
-    this.app.setErrorHandler(function (error, _request, reply) {
-      if (error instanceof fastify.errorCodes.FST_ERR_BAD_STATUS_CODE) {
-        // Log error
-        this.log.error(error)
-        // Send error response
-        reply.status(500).send({ ok: false })
-      } else {
-        // fastify will use parent error handler to handle this
-        reply.send(error)
-      }
-    })
+    this.app.setErrorHandler(handleErrors)
   }
 
   listen() {

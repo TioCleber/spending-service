@@ -3,7 +3,7 @@ import { FastifyInstance } from 'fastify'
 import UsersController from './controllers/UsersController'
 import SpendingController from './controllers/SpendingController'
 import SessionsController from './controllers/SessionsController'
-import { handleAuthMiddleware } from './utils/hooks'
+import { handleAuthMiddleware } from './utils/handleAuthMiddleware'
 import ExpensesController from './controllers/ExpensesController'
 
 class Routes {

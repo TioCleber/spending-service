@@ -2,6 +2,7 @@ import { prisma } from '../database/prisma'
 
 import bcrypt from 'bcryptjs'
 import { IUpdateUser, IUser } from '../types/IUser'
+import { handleValues } from '../utils/handleValues'
 
 export const createUser = async (body: IUser) => {
   const userExists = await prisma.user.findFirst({
@@ -60,7 +61,21 @@ export const getUser = async (id: string) => {
     },
   })
 
-  return { user }
+  const { expensesTotals, spendingTotals } = handleValues(user)
+
+  const response = {
+    ...user,
+    expenses: {
+      total: expensesTotals,
+      allExpenses: [...user.expenses],
+    },
+    spending: {
+      total: spendingTotals,
+      allSpent: [...user.spending],
+    },
+  }
+
+  return { user: response }
 }
 
 export const updateUser = async (id: string, body: IUpdateUser) => {

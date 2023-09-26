@@ -36,7 +36,7 @@ class UsersController {
 
     await updateUser(id, body)
 
-    return rep.status(204)
+    return rep.status(204).send()
   }
 
   async delete(req: FastifyRequest, rep: FastifyReply) {
@@ -44,7 +44,7 @@ class UsersController {
 
     await deleteUser(id)
 
-    return rep.status(204)
+    return rep.status(204).send()
   }
 }
 

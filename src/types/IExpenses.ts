@@ -6,3 +6,9 @@ export interface IExpenses {
   date: string
 }
 
+export interface IUpdateExpenses {
+  name?: string
+  institution?: string
+  value?: number
+  date?: string
+}

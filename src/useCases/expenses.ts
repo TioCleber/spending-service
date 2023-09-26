@@ -1,6 +1,6 @@
 import { prisma } from '../database/prisma'
 
-import { IExpenses } from '../types/IExpenses'
+import { IExpenses, IUpdateExpenses } from '../types/IExpenses'
 
 export const createExpenses = async (body: IExpenses) => {
   await prisma.expenses.create({
@@ -35,7 +35,7 @@ export const getExpenses = async (id: string) => {
   return { expenses }
 }
 
-export const updateExpenses = async (id: string, body: IExpenses) => {
+export const updateExpenses = async (id: string, body: IUpdateExpenses) => {
   await prisma.expenses.update({
     where: {
       id,

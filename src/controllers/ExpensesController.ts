@@ -1,8 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 
-import { paramsSchema } from '../schemas/paramsSchema'
-import { spendingSchema } from '../schemas/spendingSchema'
-import { querySchema } from '../schemas/querySchema'
 import {
   createExpenses,
   deleteExpenses,
@@ -10,15 +7,19 @@ import {
   updateExpenses,
 } from '../useCases/expenses'
 
+import { expensesSchema, updateExpensesSchema } from '../schemas/expensesSchema'
+import { paramsSchema } from '../schemas/paramsSchema'
+import { querySchema } from '../schemas/querySchema'
+
 class ExpensesController {
   async create(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = spendingSchema
+    const bodySchema = expensesSchema
 
     const body = bodySchema.parse(req.body)
 
     await createExpenses(body)
 
-    return rep.status(201).send({ message: 'Spending created.' })
+    return rep.status(201).send({ message: 'Expenses created.' })
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
@@ -34,14 +35,14 @@ class ExpensesController {
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = spendingSchema
+    const bodySchema = updateExpensesSchema
 
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
 
     await updateExpenses(id, body)
 
-    return rep.status(204)
+    return rep.status(204).send()
   }
 
   async delete(req: FastifyRequest, rep: FastifyReply) {
@@ -49,7 +50,7 @@ class ExpensesController {
 
     await deleteExpenses(id)
 
-    return rep.status(204)
+    return rep.status(204).send()
   }
 }
 

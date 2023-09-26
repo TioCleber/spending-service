@@ -43,7 +43,7 @@ class SpendingController {
 
     await updateSpending(id, body)
 
-    return rep.status(204)
+    return rep.status(204).send()
   }
 
   async delete(req: FastifyRequest, rep: FastifyReply) {
@@ -51,7 +51,7 @@ class SpendingController {
 
     await deleteSpending(id)
 
-    return rep.status(204)
+    return rep.status(204).send()
   }
 }
 
