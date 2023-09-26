@@ -8,3 +8,11 @@ export const spendingSchema = z.object({
   value: z.number(),
   date: z.string(),
 })
+
+export const updateSpendingSchema = z.object({
+  name: z.string().optional(),
+  institution: z.string().optional(),
+  paymentMethod: z.string().optional(),
+  value: z.number().optional(),
+  date: z.string().optional(),
+})

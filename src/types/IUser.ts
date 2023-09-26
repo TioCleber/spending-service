@@ -9,11 +9,13 @@ export interface IUser {
 }
 
 export interface IUpdateUser {
-  firstName: string
+  firstName?: string
   lastName?: string
-  email: string
+  email?: string
   password?: string
   salary?: number
   moneySaved?: number
   earnings?: number
+  totalSpent?: number
+  totalExpenses?: number
 }

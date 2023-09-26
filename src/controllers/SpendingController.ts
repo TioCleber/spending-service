@@ -9,7 +9,7 @@ import {
 } from '../useCases/spending'
 
 import { paramsSchema } from '../schemas/paramsSchema'
-import { spendingSchema } from '../schemas/spendingSchema'
+import { spendingSchema, updateSpendingSchema } from '../schemas/spendingSchema'
 import { querySchema } from '../schemas/querySchema'
 
 class SpendingController {
@@ -36,12 +36,12 @@ class SpendingController {
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = spendingSchema
+    const bodySchema = updateSpendingSchema
 
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
 
-    await updateSpending(id, body)
+    await updateSpending(id, body, req.id)
 
     return rep.status(204).send()
   }
@@ -49,7 +49,7 @@ class SpendingController {
   async delete(req: FastifyRequest, rep: FastifyReply) {
     const { id } = paramsSchema.parse(req.params)
 
-    await deleteSpending(id)
+    await deleteSpending(id, req.id)
 
     return rep.status(204).send()
   }

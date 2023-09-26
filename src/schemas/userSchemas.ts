@@ -17,4 +17,6 @@ export const updateUserSchema = z.object({
   salary: z.number().optional(),
   moneySaved: z.number().optional(),
   earnings: z.number().optional(),
+  totalSpent: z.number().optional(),
+  totalExpenses: z.number().optional(),
 })

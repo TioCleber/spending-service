@@ -21,10 +21,6 @@ class UsersController {
 
     const { user } = await getUser(id ?? req.id)
 
-    if (!user) {
-      return rep.status(404).send({ message: "User don't exists." })
-    }
-
     return user
   }
 
