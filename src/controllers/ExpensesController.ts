@@ -40,7 +40,7 @@ class ExpensesController {
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
 
-    await updateExpenses(id, body)
+    await updateExpenses(id, body, req.id)
 
     return rep.status(204).send()
   }
@@ -48,7 +48,7 @@ class ExpensesController {
   async delete(req: FastifyRequest, rep: FastifyReply) {
     const { id } = paramsSchema.parse(req.params)
 
-    await deleteExpenses(id)
+    await deleteExpenses(id, req.id)
 
     return rep.status(204).send()
   }

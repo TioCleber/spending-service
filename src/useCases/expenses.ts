@@ -1,7 +1,7 @@
 import { prisma } from '../database/prisma'
+import { updateUser } from './user'
 
 import { IExpenses, IUpdateExpenses } from '../types/IExpenses'
-import { updateUser } from './user'
 
 export const createExpenses = async (body: IExpenses) => {
   await prisma.expenses.create({
@@ -21,14 +21,7 @@ export const createExpenses = async (body: IExpenses) => {
 
   const totalExpensesValueUpdated = totalExpenses + body.value
 
-  await prisma.user.update({
-    where: {
-      id: body.userId,
-    },
-    data: {
-      totalExpenses: totalExpensesValueUpdated,
-    },
-  })
+  await updateUser(body.userId, { totalExpenses: totalExpensesValueUpdated })
 }
 
 export const getExpenses = async (id: string) => {
@@ -58,7 +51,11 @@ export const getExpenses = async (id: string) => {
   return { expenses }
 }
 
-export const updateExpenses = async (id: string, body: IUpdateExpenses) => {
+export const updateExpenses = async (
+  id: string,
+  body: IUpdateExpenses,
+  userId: string
+) => {
   if (body.value) {
     const expenses = await prisma.expenses.findFirst({
       where: {
@@ -73,18 +70,18 @@ export const updateExpenses = async (id: string, body: IUpdateExpenses) => {
 
     const userTotalExpenses = await prisma.user.findUnique({
       where: {
-        id,
+        id: userId,
       },
       select: {
         totalExpenses: true,
       },
     })
 
-    const totalExpenses = Number(userTotalExpenses?.totalExpenses ?? 0)
+    const totalSpent = Number(userTotalExpenses?.totalExpenses ?? 0)
 
-    const newTotalExpensesValue = expensesValue - totalExpenses + body.value
+    const newTotalExpensesValue = totalSpent - expensesValue + body.value
 
-    await updateUser(id, { totalExpenses: newTotalExpensesValue })
+    await updateUser(userId, { totalExpenses: newTotalExpensesValue })
 
     await prisma.expenses.update({
       where: {
@@ -102,7 +99,7 @@ export const updateExpenses = async (id: string, body: IUpdateExpenses) => {
   })
 }
 
-export const deleteExpenses = async (id: string) => {
+export const deleteExpenses = async (id: string, userId: string) => {
   const expenses = await prisma.expenses.findFirst({
     where: {
       id,
@@ -112,11 +109,11 @@ export const deleteExpenses = async (id: string) => {
     },
   })
 
-  const spentValue = Number(expenses?.value ?? 0)
+  const expensesValue = Number(expenses?.value ?? 0)
 
   const userTotalExpenses = await prisma.user.findUnique({
     where: {
-      id,
+      id: userId,
     },
     select: {
       totalExpenses: true,
@@ -125,11 +122,11 @@ export const deleteExpenses = async (id: string) => {
 
   const totalExpenses = Number(userTotalExpenses?.totalExpenses ?? 0)
 
-  const totalExpensesValueUpdated = totalExpenses - spentValue
+  const totalExpensesValueUpdated = totalExpenses - expensesValue
 
-  await updateUser(id, { totalExpenses: totalExpensesValueUpdated })
+  await updateUser(userId, { totalExpenses: totalExpensesValueUpdated })
 
-  await prisma.expenses.delete({
+  await prisma.spending.delete({
     where: {
       id,
     },

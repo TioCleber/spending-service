@@ -38,6 +38,7 @@ export const getSpending = async (id: string) => {
       name: true,
       institution: true,
       value: true,
+      paymentMethod: true,
       user: {
         select: {
           email: true,
