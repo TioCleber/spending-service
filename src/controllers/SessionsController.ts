@@ -1,8 +1,5 @@
-import jwt from 'jsonwebtoken'
 import { FastifyRequest, FastifyReply } from 'fastify'
-import bcrypt from 'bcryptjs'
-import { prisma } from '../database/prisma'
-import { SECRET } from '../config/config'
+
 import { sessionsSchema } from '../schemas/sessionsSchema'
 import { getSession } from '../useCases/sessions'
 
