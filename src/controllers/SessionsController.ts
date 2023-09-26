@@ -11,7 +11,7 @@ class SessionsController {
 
     const { response } = await createSessions({ email, password })
 
-    return rep.status(200).send(response)
+    return rep.status(201).send(response)
   }
 }
 
