@@ -1,11 +1,9 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-
-import auth from './middlewares/auth'
+import { FastifyInstance } from 'fastify'
 
 import UsersController from './controllers/UsersController'
 import SpendingController from './controllers/SpendingController'
 import SessionsController from './controllers/SessionsController'
-import { addNewHook } from './utils/hooks'
+import { handleAuthMiddleware } from './utils/hooks'
 
 class Routes {
   async init(app: FastifyInstance) {
@@ -17,7 +15,7 @@ class Routes {
 
   get(app: FastifyInstance) {
     app.register(async (instance) => {
-      addNewHook(instance, 'preHandler')
+      handleAuthMiddleware(instance, 'preHandler')
 
       instance.get('/profile', UsersController.get)
 
@@ -31,7 +29,7 @@ class Routes {
     app.post('/users', UsersController.create)
 
     app.register(async (instance) => {
-      addNewHook(instance, 'preHandler')
+      handleAuthMiddleware(instance, 'preHandler')
 
       instance.post('/spending', SpendingController.create)
     })
@@ -39,7 +37,7 @@ class Routes {
 
   put(app: FastifyInstance) {
     app.register(async (instance) => {
-      addNewHook(instance, 'preHandler')
+      handleAuthMiddleware(instance, 'preHandler')
 
       instance.put('/users/:id', UsersController.put)
 
@@ -49,7 +47,7 @@ class Routes {
 
   delete(app: FastifyInstance) {
     app.register(async (instance) => {
-      addNewHook(instance, 'preHandler')
+      handleAuthMiddleware(instance, 'preHandler')
 
       instance.delete('/users/:id', UsersController.delete)
 

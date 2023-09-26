@@ -11,18 +11,36 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  firstName String
-  lastName  String?
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  firstName  String
+  lastName   String?
+  email      String   @unique
+  password   String
+  salary     Float?
+  moneySaved Float?
+  earnings   Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 
   spending Spending[]
+  expenses Expenses[]
 }
 
 model Spending {
+  id            String   @id @default(uuid())
+  userId        String
+  name          String
+  institution   String
+  paymentMethod String
+  value         Float
+  date          DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Expenses {
   id          String   @id @default(uuid())
   userId      String
   name        String

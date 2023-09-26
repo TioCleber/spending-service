@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { prisma } from '../lib/prisma'
+import { prisma } from '../database/prisma'
 
 class SpendingController {
   async create(req: FastifyRequest, rep: FastifyReply) {

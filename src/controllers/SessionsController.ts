@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { z } from 'zod'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import bcrypt from 'bcryptjs'
-import { prisma } from '../lib/prisma'
+import { prisma } from '../database/prisma'
 import { SECRET } from '../config/config'
 
 class SessionsController {
