@@ -2,6 +2,11 @@ import { prisma } from '../database/prisma'
 import { updateUser } from './user'
 
 import { IExpenses, IUpdateExpenses } from '../types/IExpenses'
+import {
+  handleSubtractValues,
+  handleSumValues,
+  handleUpdateValues,
+} from '../utils/handleValues'
 
 export const createExpenses = async (body: IExpenses) => {
   await prisma.expenses.create({
@@ -17,9 +22,10 @@ export const createExpenses = async (body: IExpenses) => {
     },
   })
 
-  const totalExpenses = Number(expensesValue?.totalExpenses ?? 0)
-
-  const totalExpensesValueUpdated = totalExpenses + body.value
+  const totalExpensesValueUpdated = handleSumValues({
+    bodyValue: body.value,
+    userValue: expensesValue?.totalExpenses,
+  })
 
   await updateUser(body.userId, { totalExpenses: totalExpensesValueUpdated })
 }
@@ -66,8 +72,6 @@ export const updateExpenses = async (
       },
     })
 
-    const expensesValue = Number(expenses?.value ?? 0)
-
     const userTotalExpenses = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -77,9 +81,11 @@ export const updateExpenses = async (
       },
     })
 
-    const totalSpent = Number(userTotalExpenses?.totalExpenses ?? 0)
-
-    const newTotalExpensesValue = totalSpent - expensesValue + body.value
+    const newTotalExpensesValue = handleUpdateValues({
+      bodyValue: body.value,
+      userTotal: userTotalExpenses?.totalExpenses,
+      value: expenses?.value,
+    })
 
     await updateUser(userId, { totalExpenses: newTotalExpensesValue })
 
@@ -109,8 +115,6 @@ export const deleteExpenses = async (id: string, userId: string) => {
     },
   })
 
-  const expensesValue = Number(expenses?.value ?? 0)
-
   const userTotalExpenses = await prisma.user.findUnique({
     where: {
       id: userId,
@@ -120,9 +124,10 @@ export const deleteExpenses = async (id: string, userId: string) => {
     },
   })
 
-  const totalExpenses = Number(userTotalExpenses?.totalExpenses ?? 0)
-
-  const totalExpensesValueUpdated = totalExpenses - expensesValue
+  const totalExpensesValueUpdated = handleSubtractValues({
+    userTotal: userTotalExpenses?.totalExpenses,
+    value: expenses?.value,
+  })
 
   await updateUser(userId, { totalExpenses: totalExpensesValueUpdated })
 

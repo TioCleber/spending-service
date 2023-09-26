@@ -1,6 +1,11 @@
 import { prisma } from '../database/prisma'
 
 import { ISpending, IUpdateSpending } from '../types/ISpending'
+import {
+  handleSubtractValues,
+  handleSumValues,
+  handleUpdateValues,
+} from '../utils/handleValues'
 import { updateUser } from './user'
 
 export const createSpending = async (body: ISpending) => {
@@ -17,9 +22,10 @@ export const createSpending = async (body: ISpending) => {
     },
   })
 
-  const totalSpent = Number(spentValue?.totalSpent ?? 0)
-
-  const totalSpentValueUpdated = totalSpent + body.value
+  const totalSpentValueUpdated = handleSumValues({
+    bodyValue: body.value,
+    userValue: spentValue?.totalSpent,
+  })
 
   await updateUser(body.userId, { totalSpent: totalSpentValueUpdated })
 }
@@ -67,8 +73,6 @@ export const updateSpending = async (
       },
     })
 
-    const spentValue = Number(spent?.value ?? 0)
-
     const userTotalSpent = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -78,9 +82,11 @@ export const updateSpending = async (
       },
     })
 
-    const totalSpent = Number(userTotalSpent?.totalSpent ?? 0)
-
-    const newTotalSpentValue = totalSpent - spentValue + body.value
+    const newTotalSpentValue = handleUpdateValues({
+      bodyValue: body.value,
+      userTotal: userTotalSpent?.totalSpent,
+      value: spent?.value,
+    })
 
     await updateUser(userId, { totalSpent: newTotalSpentValue })
 
@@ -110,8 +116,6 @@ export const deleteSpending = async (id: string, userId: string) => {
     },
   })
 
-  const spentValue = Number(spent?.value ?? 0)
-
   const userTotalSpent = await prisma.user.findUnique({
     where: {
       id: userId,
@@ -121,9 +125,10 @@ export const deleteSpending = async (id: string, userId: string) => {
     },
   })
 
-  const totalSpent = Number(userTotalSpent?.totalSpent ?? 0)
-
-  const totalSpentValueUpdated = totalSpent - spentValue
+  const totalSpentValueUpdated = handleSubtractValues({
+    userTotal: userTotalSpent?.totalSpent,
+    value: spent?.value,
+  })
 
   await updateUser(userId, { totalSpent: totalSpentValueUpdated })
 
