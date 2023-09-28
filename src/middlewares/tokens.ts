@@ -1,10 +1,6 @@
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify'
 
-export const tokens = async (
-  req: FastifyRequest,
-  rep: FastifyReply,
-  done: HookHandlerDoneFunction
-) => {
+export const tokens = async (req: FastifyRequest, rep: FastifyReply) => {
   const headers = req.headers
 
   const apiToken = process.env.API_TOKEN
@@ -21,6 +17,4 @@ export const tokens = async (
       message: 'Key invalid.',
     })
   }
-
-  done()
 }

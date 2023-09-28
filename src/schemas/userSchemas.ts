@@ -1,13 +1,10 @@
 import { z } from 'zod'
 
-export const createUSerSchema = z.object({
+export const createUserSchema = z.object({
   firstName: z.string(),
   lastName: z.string().optional(),
   email: z.string(),
   password: z.string(),
-  salary: z.number().optional(),
-  moneySaved: z.number().optional(),
-  earnings: z.number().optional(),
 })
 
 export const updateUserSchema = z.object({
@@ -16,7 +13,7 @@ export const updateUserSchema = z.object({
   email: z.string(),
   salary: z.number().optional(),
   moneySaved: z.number().optional(),
-  earnings: z.number().optional(),
   totalSpent: z.number().optional(),
   totalExpenses: z.number().optional(),
+  totalEarnings: z.number().optional(),
 })

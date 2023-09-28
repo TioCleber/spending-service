@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 export const expensesSchema = z.object({
-  userId: z.string().uuid(),
   name: z.string(),
   institution: z.string(),
   value: z.number(),

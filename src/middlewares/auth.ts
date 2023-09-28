@@ -12,8 +12,7 @@ interface TokenPayload {
 class Auth {
   async authentication(
     req: FastifyRequest,
-    rep: FastifyReply,
-    done: HookHandlerDoneFunction
+    rep: FastifyReply
   ) {
     const authHeader = req.headers.authorization as string
 
@@ -33,8 +32,6 @@ class Auth {
       const { id } = paramsDecoded.parse(decoded)
 
       req.id = id
-
-      done()
     } catch (err) {
       return rep.status(401).send({
         message: 'Token not valid.',

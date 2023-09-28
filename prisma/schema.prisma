@@ -10,16 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sessions {
-  id    String @id @default(uuid())
-  token String
-
-  User User[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-}
-
 model User {
   id            String  @id @default(uuid())
   firstName     String
@@ -30,10 +20,9 @@ model User {
   moneySaved    Float   @default(0)
   totalSpent    Float   @default(0)
   totalExpenses Float   @default(0)
-  sessionsId    String?
+  totalEarnings Float   @default(0)
   flagsId       String?
 
-  sessions Sessions?  @relation(fields: [sessionsId], references: [id])
   flags    Flags?     @relation(fields: [flagsId], references: [id])
   spending Spending[]
   expenses Expenses[]
@@ -51,22 +40,26 @@ model Spending {
   paymentMethod String
   value         Float
   date          DateTime
+  categoriesId  String?
 
-  user User @relation(fields: [userId], references: [id])
+  category Categories? @relation(fields: [categoriesId], references: [id])
+  user     User        @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
 model Expenses {
-  id          String   @id @default(uuid())
-  userId      String
-  name        String
-  institution String
-  value       Float
-  date        DateTime
+  id           String   @id @default(uuid())
+  userId       String
+  name         String
+  institution  String
+  value        Float
+  date         DateTime
+  categoriesId String?
 
-  user User @relation(fields: [userId], references: [id])
+  category Categories? @relation(fields: [categoriesId], references: [id])
+  user     User        @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -90,7 +83,18 @@ model Flags {
   id    String @id @default(uuid())
   flags String
 
-  User User[]
+  user User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Categories {
+  id   String @id @default(uuid())
+  name String
+
+  spending Spending[]
+  expenses Expenses[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())

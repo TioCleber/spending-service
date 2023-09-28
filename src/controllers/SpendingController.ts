@@ -10,7 +10,6 @@ import {
 
 import { paramsSchema } from '../schemas/paramsSchema'
 import { spendingSchema, updateSpendingSchema } from '../schemas/spendingSchema'
-import { querySchema } from '../schemas/querySchema'
 
 class SpendingController {
   async create(req: FastifyRequest, rep: FastifyReply) {
@@ -18,15 +17,13 @@ class SpendingController {
 
     const body = bodySchema.parse(req.body)
 
-    await createSpending(body)
+    await createSpending({ ...body, userId: req.id })
 
     return rep.status(201).send({ message: 'Spending created.' })
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { id } = querySchema.parse(req.query)
-
-    const { spending } = await getSpending(id ?? req.id)
+    const { spending } = await getSpending(req.id)
 
     if (!spending.length) {
       return rep.status(404).send({ message: 'No existing expenses.' })

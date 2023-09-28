@@ -16,7 +16,11 @@ export const createUser = async (body: IUser) => {
 
   const passwordHash = await bcrypt.hash(body.password, 8)
 
-  await prisma.user.create({ data: { ...body, password: passwordHash } })
+  const res = await prisma.user.create({
+    data: { ...body, password: passwordHash },
+  })
+
+  console.log(res)
 }
 
 export const getUser = async (id: string) => {
@@ -33,6 +37,11 @@ export const getUser = async (id: string) => {
       salary: true,
       totalExpenses: true,
       totalSpent: true,
+      flags: {
+        select: {
+          flags: true,
+        },
+      },
       expenses: {
         select: {
           id: true,
@@ -86,6 +95,7 @@ export const getUser = async (id: string) => {
     email: user.email,
     moneySaved: user.moneySaved,
     salary: user.salary,
+    flag: user.flags?.flags ?? null,
     expenses: {
       total: user.totalExpenses,
       allExpenses: [...user.expenses],

@@ -6,6 +6,7 @@ import SessionsController from './controllers/SessionsController'
 import ExpensesController from './controllers/ExpensesController'
 import { tokens } from './middlewares/tokens'
 import auth from './middlewares/auth'
+import CategoriesController from './controllers/CategoriesController'
 
 class Routes {
   async init(app: FastifyInstance) {
@@ -32,6 +33,12 @@ class Routes {
       '/v1/pvt/expenses',
       { preHandler: [tokens, auth.authentication] },
       ExpensesController.get
+    )
+
+    app.get(
+      '/v1/pvt/categories',
+      { preHandler: [tokens, auth.authentication] },
+      CategoriesController.get
     )
   }
 

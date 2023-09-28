@@ -5,6 +5,7 @@ export interface ISpending {
   paymentMethod: string
   value: number
   date: string
+  category?: string
 }
 
 export interface IUpdateSpending {
@@ -13,4 +14,5 @@ export interface IUpdateSpending {
   paymentMethod?: string
   value?: number
   date?: string
+  category?: string
 }

@@ -1,13 +1,12 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 
-import { createUSerSchema, updateUserSchema } from '../schemas/userSchemas'
+import { createUserSchema, updateUserSchema } from '../schemas/userSchemas'
 import { paramsSchema } from '../schemas/paramsSchema'
-import { querySchema } from '../schemas/querySchema'
 import { createUser, deleteUser, getUser, updateUser } from '../useCases/user'
 
 class UsersController {
   async create(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = createUSerSchema
+    const bodySchema = createUserSchema
 
     const body = bodySchema.parse(req.body)
 
@@ -17,9 +16,7 @@ class UsersController {
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { id } = querySchema.parse(req.query)
-
-    const { user } = await getUser(id ?? req.id)
+    const { user } = await getUser(req.id)
 
     return rep.status(200).send(user)
   }

@@ -1,15 +1,15 @@
 export interface IHandleValues {
   value?: number
-  userTotal?: number | null
+  userTotal?: number
   bodyValue: number
 }
 
 export interface IHandleSubtractExpenses {
   value?: number
-  userTotal?: number | null
+  userTotal?: number
 }
 
 export interface IHandleSumValues {
-  userValue?: number | null
+  userValue?: number
   bodyValue: number
 }
