@@ -9,7 +9,11 @@ import {
 } from '../useCases/spending'
 
 import { paramsSchema } from '../schemas/paramsSchema'
-import { spendingSchema, updateSpendingSchema } from '../schemas/spendingSchema'
+import {
+  paramsSpendingSchema,
+  spendingSchema,
+  updateSpendingSchema,
+} from '../schemas/spendingSchema'
 
 class SpendingController {
   async create(req: FastifyRequest, rep: FastifyReply) {
@@ -23,7 +27,9 @@ class SpendingController {
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { spending } = await getSpending(req.id)
+    const { categoriesId } = paramsSpendingSchema.parse(req.query)
+
+    const { spending } = await getSpending(req.id, categoriesId)
 
     if (!spending.length) {
       return rep.status(404).send({ message: 'No existing expenses.' })

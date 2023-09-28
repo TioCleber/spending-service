@@ -17,3 +17,7 @@ export const updateSpendingSchema = z.object({
   date: z.string().optional(),
   category: z.string().optional(),
 })
+
+export const paramsSpendingSchema = z.object({
+  categoriesId: z.string().optional(),
+})

@@ -32,8 +32,6 @@ export const createSpending = async (body: ISpending) => {
   if (category) {
     const { res } = await createCategory(category)
 
-    console.log(res, category)
-
     await prisma.spending.create({
       data: {
         date,
@@ -46,8 +44,6 @@ export const createSpending = async (body: ISpending) => {
       },
     })
   } else {
-    console.log('caiu aqui')
-
     await prisma.spending.create({
       data: {
         date,
@@ -61,10 +57,15 @@ export const createSpending = async (body: ISpending) => {
   }
 }
 
-export const getSpending = async (id: string) => {
+export const getSpending = async (id?: string, categoryId?: string | null) => {
   const spending = await prisma.spending.findMany({
     where: {
-      userId: id,
+      OR: [
+        {
+          categoriesId: categoryId,
+          userId: id,
+        },
+      ],
     },
     orderBy: {
       date: 'desc',
@@ -76,6 +77,7 @@ export const getSpending = async (id: string) => {
       institution: true,
       value: true,
       paymentMethod: true,
+      categoriesId: true,
       user: {
         select: {
           email: true,
