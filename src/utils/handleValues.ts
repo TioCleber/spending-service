@@ -1,8 +1,4 @@
-export interface IHandleValues {
-  value?: number
-  userTotal?: number
-  bodyValue: number
-}
+import { IHandleSubtractExpenses, IHandleSumValues, IHandleValues } from "../types/IValues"
 
 export const handleUpdateValues = ({
   value,
@@ -18,11 +14,6 @@ export const handleUpdateValues = ({
   return newTotalValue
 }
 
-export interface IHandleSubtractExpenses {
-  value?: number
-  userTotal?: number
-}
-
 export const handleSubtractValues = ({
   userTotal,
   value,
@@ -34,11 +25,6 @@ export const handleSubtractValues = ({
   const subtractValues = total - repValue
 
   return subtractValues
-}
-
-export interface IHandleSumValues {
-  userValue?: number
-  bodyValue: number
 }
 
 export const handleSumValues = ({ bodyValue, userValue }: IHandleSumValues) => {
