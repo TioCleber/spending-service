@@ -14,6 +14,7 @@ class App {
       logger: true,
     })
 
+    this.errors()
     this.routes()
   }
 

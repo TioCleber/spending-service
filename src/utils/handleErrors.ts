@@ -5,5 +5,5 @@ export const handleErrors = (
   _request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  reply.status(error.statusCode ?? 500).send({ error: error.message })
+  return reply.status(error.statusCode ?? 500).send({ error: error.message })
 }

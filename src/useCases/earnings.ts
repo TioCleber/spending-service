@@ -5,7 +5,7 @@ import { IEarnings, IGetEarnings, IUpdateEarnings } from '../types/IEarnings'
 export const createEarnings = async (body: IEarnings) => {
   const { date, institution, name, userId, value } = body
 
-  await prisma.expenses.create({
+  await prisma.earnings.create({
     data: {
       date,
       institution,
