@@ -26,10 +26,10 @@ model User {
   lastName      String?
   email         String  @unique
   password      String
-  salary        Float?
-  moneySaved    Float?
-  totalSpent    Float?
-  totalExpenses Float?
+  salary        Float   @default(0)
+  moneySaved    Float   @default(0)
+  totalSpent    Float   @default(0)
+  totalExpenses Float   @default(0)
   sessionsId    String?
   flagsId       String?
 
