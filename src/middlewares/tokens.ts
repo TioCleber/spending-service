@@ -1,10 +1,6 @@
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify'
+import { FastifyReply, FastifyRequest } from 'fastify'
 
-export const tokens = async (
-  req: FastifyRequest,
-  rep: FastifyReply,
-  done: HookHandlerDoneFunction
-) => {
+export const tokens = async (req: FastifyRequest, rep: FastifyReply) => {
   const headers = req.headers
 
   const apiToken = process.env.API_TOKEN
@@ -12,15 +8,13 @@ export const tokens = async (
 
   if (!headers['x-api-token'] || headers['x-api-token'] !== apiToken) {
     return rep.status(401).send({
-      message: 'Token invalid.',
+      message: 'Token is required.',
     })
   }
 
   if (!headers['x-api-key'] || headers['x-api-key'] !== apiKey) {
     return rep.status(401).send({
-      message: 'Key invalid.',
+      message: 'Key is required.',
     })
   }
-
-  done()
 }

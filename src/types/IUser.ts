@@ -5,7 +5,6 @@ export interface IUser {
   password: string
   salary?: number
   moneySaved?: number
-  earnings?: number
 }
 
 export interface IUpdateUser {
@@ -15,7 +14,6 @@ export interface IUpdateUser {
   password?: string
   salary?: number
   moneySaved?: number
-  earnings?: number
   totalSpent?: number
   totalExpenses?: number
 }

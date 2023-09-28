@@ -1,23 +1,19 @@
-export interface ISpending {
+export interface IEarnings {
   userId: string
   name: string
   institution: string
-  paymentMethod: string
   value: number
   date: string
-  category?: string
 }
 
-export interface IUpdateSpending {
+export interface IUpdateEarnings {
   name?: string
   institution?: string
-  paymentMethod?: string
-  value?: number
+  value: number
   date?: string
-  categoriesId?: string
 }
 
-export interface IGetSpending {
+export interface IGetEarnings {
   id: string
   categoryId?: string | null
   lt?: string

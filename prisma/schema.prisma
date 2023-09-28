@@ -11,21 +11,25 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id            String  @id @default(uuid())
   firstName     String
   lastName      String?
-  email         String   @unique
+  email         String  @unique
   password      String
-  salary        Float?
-  moneySaved    Float?
-  earnings      Float?
-  totalSpent    Float    @default(0)
-  totalExpenses Float    @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  salary        Float   @default(0)
+  moneySaved    Float   @default(0)
+  totalSpent    Float   @default(0)
+  totalExpenses Float   @default(0)
+  totalEarnings Float   @default(0)
+  flagsId       String?
 
+  flags    Flags?     @relation(fields: [flagsId], references: [id])
   spending Spending[]
   expenses Expenses[]
+  earnings Earnings[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Spending {
@@ -36,21 +40,62 @@ model Spending {
   paymentMethod String
   value         Float
   date          DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  categoriesId  String?
 
-  user User @relation(fields: [userId], references: [id])
+  category Categories? @relation(fields: [categoriesId], references: [id])
+  user     User        @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Expenses {
+  id           String   @id @default(uuid())
+  userId       String
+  name         String
+  institution  String
+  value        Float
+  date         DateTime
+  categoriesId String?
+
+  category Categories? @relation(fields: [categoriesId], references: [id])
+  user     User        @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Earnings {
   id          String   @id @default(uuid())
   userId      String
   name        String
-  institution String
   value       Float
+  institution String
   date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Flags {
+  id    String @id @default(uuid())
+  flags String
+
+  user User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Categories {
+  id   String @id @default(uuid())
+  name String
+
+  spending Spending[]
+  expenses Expenses[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }

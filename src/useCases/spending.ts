@@ -1,17 +1,18 @@
 import { prisma } from '../database/prisma'
+import { IQueries } from '../types/IQueries'
 
-import { ISpending, IUpdateSpending } from '../types/ISpending'
+import { IGetSpending, ISpending, IUpdateSpending } from '../types/ISpending'
 import {
   handleSubtractValues,
   handleSumValues,
   handleUpdateValues,
 } from '../utils/handleValues'
+import { createCategory } from './categories'
 import { updateUser } from './user'
 
 export const createSpending = async (body: ISpending) => {
-  await prisma.spending.create({
-    data: body,
-  })
+  const { date, institution, name, paymentMethod, userId, value, category } =
+    body
 
   const spentValue = await prisma.user.findUnique({
     where: {
@@ -28,12 +29,53 @@ export const createSpending = async (body: ISpending) => {
   })
 
   await updateUser(body.userId, { totalSpent: totalSpentValueUpdated })
+
+  if (category) {
+    const { res } = await createCategory(category)
+
+    await prisma.spending.create({
+      data: {
+        date,
+        institution,
+        name,
+        paymentMethod,
+        userId,
+        value,
+        categoriesId: res.id,
+      },
+    })
+  } else {
+    await prisma.spending.create({
+      data: {
+        date,
+        institution,
+        name,
+        paymentMethod,
+        userId,
+        value,
+      },
+    })
+  }
 }
 
-export const getSpending = async (id: string) => {
+export const getSpending = async ({
+  id,
+  categoryId,
+  gte,
+  lt,
+}: IGetSpending) => {
   const spending = await prisma.spending.findMany({
     where: {
-      userId: id,
+      OR: [
+        {
+          categoriesId: categoryId,
+          userId: id,
+          date: {
+            gte,
+            lt,
+          },
+        },
+      ],
     },
     orderBy: {
       date: 'desc',
@@ -45,6 +87,7 @@ export const getSpending = async (id: string) => {
       institution: true,
       value: true,
       paymentMethod: true,
+      categoriesId: true,
       user: {
         select: {
           email: true,
@@ -63,7 +106,9 @@ export const updateSpending = async (
   body: IUpdateSpending,
   userId: string
 ) => {
-  if (body.value) {
+  const { date, institution, name, paymentMethod, value, categoriesId } = body
+
+  if (value) {
     const spent = await prisma.spending.findFirst({
       where: {
         id,
@@ -83,7 +128,7 @@ export const updateSpending = async (
     })
 
     const newTotalSpentValue = handleUpdateValues({
-      bodyValue: body.value,
+      bodyValue: value,
       userTotal: userTotalSpent?.totalSpent,
       value: spent?.value,
     })
@@ -94,7 +139,15 @@ export const updateSpending = async (
       where: {
         id,
       },
-      data: { ...body },
+      data: {
+        date,
+        institution,
+        name,
+        paymentMethod,
+        userId,
+        value,
+        categoriesId,
+      },
     })
   }
 
@@ -102,7 +155,15 @@ export const updateSpending = async (
     where: {
       id,
     },
-    data: { ...body },
+    data: {
+      date,
+      institution,
+      name,
+      paymentMethod,
+      userId,
+      value,
+      categoriesId,
+    },
   })
 }
 

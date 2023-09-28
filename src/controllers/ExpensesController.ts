@@ -8,8 +8,7 @@ import {
 } from '../useCases/expenses'
 
 import { expensesSchema, updateExpensesSchema } from '../schemas/expensesSchema'
-import { paramsSchema } from '../schemas/paramsSchema'
-import { querySchema } from '../schemas/querySchema'
+import { paramsSchema, searchSchema } from '../schemas/paramsSchema'
 
 class ExpensesController {
   async create(req: FastifyRequest, rep: FastifyReply) {
@@ -17,19 +16,20 @@ class ExpensesController {
 
     const body = bodySchema.parse(req.body)
 
-    await createExpenses(body)
+    await createExpenses({ ...body, userId: req.id })
 
     return rep.status(201).send({ message: 'Expenses created.' })
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { id } = querySchema.parse(req.query)
+    const { categoriesId, fromDate, toDate } = searchSchema.parse(req.query)
 
-    const { expenses } = await getExpenses(id ?? req.id)
-
-    if (!expenses.length) {
-      return rep.status(404).send({ message: 'No existing expenses.' })
-    }
+    const { expenses } = await getExpenses({
+      id: req.id,
+      categoryId: categoriesId,
+      gte: fromDate,
+      lt: toDate,
+    })
 
     return rep.status(200).send(expenses)
   }

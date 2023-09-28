@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 export const spendingSchema = z.object({
-  userId: z.string().uuid(),
   name: z.string(),
   institution: z.string(),
   paymentMethod: z.string(),
   value: z.number(),
   date: z.string(),
+  category: z.string().optional(),
 })
 
 export const updateSpendingSchema = z.object({
@@ -15,4 +15,5 @@ export const updateSpendingSchema = z.object({
   paymentMethod: z.string().optional(),
   value: z.number().optional(),
   date: z.string().optional(),
+  categoriesId: z.string().optional(),
 })
