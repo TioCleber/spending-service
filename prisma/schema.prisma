@@ -10,22 +10,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Sessions {
+  id    String @id @default(uuid())
+  token String
+
+  User User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
 model User {
-  id            String   @id @default(uuid())
+  id            String  @id @default(uuid())
   firstName     String
   lastName      String?
-  email         String   @unique
+  email         String  @unique
   password      String
-  salary        Float?
-  moneySaved    Float?
-  earnings      Float?
-  totalSpent    Float    @default(0)
-  totalExpenses Float    @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  salary        Float   @default(0)
+  moneySaved    Float   @default(0)
+  totalSpent    Float   @default(0)
+  totalExpenses Float   @default(0)
+  sessionsId    String
+  flagsId       String
 
+  sessions Sessions   @relation(fields: [sessionsId], references: [id])
+  flags    Flags      @relation(fields: [flagsId], references: [id])
   spending Spending[]
   expenses Expenses[]
+  earnings Earnings[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Spending {
@@ -36,10 +51,11 @@ model Spending {
   paymentMethod String
   value         Float
   date          DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Expenses {
@@ -49,8 +65,33 @@ model Expenses {
   institution String
   value       Float
   date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Earnings {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  value       String
+  institution String
+  date        DateTime
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Flags {
+  id    String @id @default(uuid())
+  flags String
+
+  User User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
