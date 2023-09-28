@@ -1,17 +1,16 @@
 import { prisma } from '../database/prisma'
 import { updateUser } from './user'
 
-import { IExpenses, IUpdateExpenses } from '../types/IExpenses'
+import { IExpenses, IGetExpenses, IUpdateExpenses } from '../types/IExpenses'
 import {
   handleSubtractValues,
   handleSumValues,
   handleUpdateValues,
 } from '../utils/handleValues'
+import { createCategory } from './categories'
 
 export const createExpenses = async (body: IExpenses) => {
-  await prisma.expenses.create({
-    data: body,
-  })
+  const { date, institution, name, userId, value, category } = body
 
   const expensesValue = await prisma.user.findUnique({
     where: {
@@ -28,12 +27,51 @@ export const createExpenses = async (body: IExpenses) => {
   })
 
   await updateUser(body.userId, { totalExpenses: totalExpensesValueUpdated })
+
+  if (category) {
+    const { res } = await createCategory(category)
+
+    await prisma.expenses.create({
+      data: {
+        date,
+        institution,
+        name,
+        userId,
+        value,
+        categoriesId: res.id,
+      },
+    })
+  } else {
+    await prisma.expenses.create({
+      data: {
+        date,
+        institution,
+        name,
+        userId,
+        value,
+      },
+    })
+  }
 }
 
-export const getExpenses = async (id: string) => {
+export const getExpenses = async ({
+  id,
+  categoryId,
+  gte,
+  lt,
+}: IGetExpenses) => {
   const expenses = await prisma.expenses.findMany({
     where: {
-      userId: id,
+      OR: [
+        {
+          categoriesId: categoryId,
+          userId: id,
+          date: {
+            gte,
+            lt,
+          },
+        },
+      ],
     },
     orderBy: {
       date: 'desc',
@@ -62,7 +100,9 @@ export const updateExpenses = async (
   body: IUpdateExpenses,
   userId: string
 ) => {
-  if (body.value) {
+  const { date, institution, name, value, categoriesId } = body
+
+  if (value) {
     const expenses = await prisma.expenses.findFirst({
       where: {
         id,
@@ -82,7 +122,7 @@ export const updateExpenses = async (
     })
 
     const newTotalExpensesValue = handleUpdateValues({
-      bodyValue: body.value,
+      bodyValue: value,
       userTotal: userTotalExpenses?.totalExpenses,
       value: expenses?.value,
     })
@@ -93,7 +133,7 @@ export const updateExpenses = async (
       where: {
         id,
       },
-      data: { ...body },
+      data: { date, institution, name, value, categoriesId },
     })
   }
 
@@ -101,7 +141,7 @@ export const updateExpenses = async (
     where: {
       id,
     },
-    data: { ...body },
+    data: { date, institution, name, value, categoriesId },
   })
 }
 

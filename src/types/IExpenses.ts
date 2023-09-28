@@ -4,6 +4,7 @@ export interface IExpenses {
   institution: string
   value: number
   date: string
+  category?: string
 }
 
 export interface IUpdateExpenses {
@@ -11,4 +12,12 @@ export interface IUpdateExpenses {
   institution?: string
   value?: number
   date?: string
+  categoriesId?: string
+}
+
+export interface IGetExpenses {
+  id: string
+  categoryId?: string | null
+  lt?: string
+  gte?: string
 }

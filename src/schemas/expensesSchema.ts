@@ -5,6 +5,7 @@ export const expensesSchema = z.object({
   institution: z.string(),
   value: z.number(),
   date: z.string(),
+  category: z.string().optional(),
 })
 
 export const updateExpensesSchema = z.object({
@@ -12,4 +13,5 @@ export const updateExpensesSchema = z.object({
   institution: z.string().optional(),
   value: z.number().optional(),
   date: z.string().optional(),
+  categoriesId: z.string().optional(),
 })

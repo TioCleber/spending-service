@@ -1,6 +1,7 @@
 import { prisma } from '../database/prisma'
+import { IQueries } from '../types/IQueries'
 
-import { ISpending, IUpdateSpending } from '../types/ISpending'
+import { IGetSpending, ISpending, IUpdateSpending } from '../types/ISpending'
 import {
   handleSubtractValues,
   handleSumValues,
@@ -57,13 +58,22 @@ export const createSpending = async (body: ISpending) => {
   }
 }
 
-export const getSpending = async (id?: string, categoryId?: string | null) => {
+export const getSpending = async ({
+  id,
+  categoryId,
+  gte,
+  lt,
+}: IGetSpending) => {
   const spending = await prisma.spending.findMany({
     where: {
       OR: [
         {
           categoriesId: categoryId,
           userId: id,
+          date: {
+            gte,
+            lt,
+          },
         },
       ],
     },
@@ -96,7 +106,7 @@ export const updateSpending = async (
   body: IUpdateSpending,
   userId: string
 ) => {
-  const { date, institution, name, paymentMethod, value } = body
+  const { date, institution, name, paymentMethod, value, categoriesId } = body
 
   if (value) {
     const spent = await prisma.spending.findFirst({
@@ -136,6 +146,7 @@ export const updateSpending = async (
         paymentMethod,
         userId,
         value,
+        categoriesId,
       },
     })
   }
@@ -151,6 +162,7 @@ export const updateSpending = async (
       paymentMethod,
       userId,
       value,
+      categoriesId,
     },
   })
 }

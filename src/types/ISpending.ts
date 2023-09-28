@@ -14,5 +14,12 @@ export interface IUpdateSpending {
   paymentMethod?: string
   value?: number
   date?: string
-  category?: string
+  categoriesId?: string
+}
+
+export interface IGetSpending {
+  id: string
+  categoryId?: string | null
+  lt?: string
+  gte?: string
 }
