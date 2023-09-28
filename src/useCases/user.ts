@@ -29,7 +29,6 @@ export const getUser = async (id: string) => {
       firstName: true,
       lastName: true,
       email: true,
-      earnings: true,
       moneySaved: true,
       salary: true,
       totalExpenses: true,
@@ -43,7 +42,7 @@ export const getUser = async (id: string) => {
           value: true,
         },
         skip: 0,
-        take: 10,
+        take: 3,
         orderBy: {
           date: 'desc',
         },
@@ -58,7 +57,21 @@ export const getUser = async (id: string) => {
           paymentMethod: true,
         },
         skip: 0,
-        take: 10,
+        take: 3,
+        orderBy: {
+          date: 'desc',
+        },
+      },
+      earnings: {
+        select: {
+          id: true,
+          name: true,
+          institution: true,
+          date: true,
+          value: true,
+        },
+        skip: 0,
+        take: 3,
         orderBy: {
           date: 'desc',
         },
@@ -71,7 +84,6 @@ export const getUser = async (id: string) => {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    earnings: user.earnings,
     moneySaved: user.moneySaved,
     salary: user.salary,
     expenses: {
@@ -82,6 +94,7 @@ export const getUser = async (id: string) => {
       total: user.totalSpent,
       allSpent: [...user.spending],
     },
+    earnings: user.earnings,
   }
 
   return { user: response }
