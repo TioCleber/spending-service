@@ -69,7 +69,7 @@ model Earnings {
   id          String   @id @default(uuid())
   userId      String
   name        String
-  value       String
+  value       Float
   institution String
   date        DateTime
 
