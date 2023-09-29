@@ -3,12 +3,12 @@ import { prisma } from '../database/prisma'
 import { IEarnings, IGetEarnings, IUpdateEarnings } from '../types/IEarnings'
 
 export const createEarnings = async (body: IEarnings) => {
-  const { date, institution, name, userId, value } = body
+  const { date, establishmentsOrServices, name, userId, value } = body
 
   await prisma.earnings.create({
     data: {
       date,
-      institution,
+      establishmentsOrServices,
       name,
       userId,
       value,
@@ -36,7 +36,7 @@ export const getEarnings = async ({ id, gte, lt }: IGetEarnings) => {
       id: true,
       date: true,
       name: true,
-      institution: true,
+      establishmentsOrServices: true,
       value: true,
       user: {
         select: {
@@ -52,13 +52,13 @@ export const getEarnings = async ({ id, gte, lt }: IGetEarnings) => {
 }
 
 export const updateEarnings = async (id: string, body: IUpdateEarnings) => {
-  const { date, institution, name, value } = body
+  const { date, establishmentsOrServices, name, value } = body
 
   await prisma.earnings.update({
     where: {
       id,
     },
-    data: { date, institution, name, value },
+    data: { date, establishmentsOrServices, name, value },
   })
 }
 

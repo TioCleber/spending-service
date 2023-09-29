@@ -1,11 +1,13 @@
 import { prisma } from '../database/prisma'
+import { SECRET } from '../config/config'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-import { SECRET } from '../config/config'
+
 import { ISessions } from '../types/ISessions'
+import { StatusCodeError } from '../utils/handleErrors'
 
 export const createSessions = async ({ email, password }: ISessions) => {
-  const user = await prisma.user.findFirstOrThrow({
+  const user = await prisma.users.findFirst({
     where: {
       email: email,
     },
@@ -19,24 +21,18 @@ export const createSessions = async ({ email, password }: ISessions) => {
   })
 
   if (!user) {
-    throw new Error('User not found.')
+    throw new StatusCodeError('User not found.', 404)
   }
 
   const validatePassword = await bcrypt.compare(password, user.password)
 
-  const { id, firstName, lastName } = user
+  const { id } = user
 
   if (!validatePassword) {
-    throw new Error('Password invalid.')
+    throw new StatusCodeError('Password invalid.', 401)
   }
 
   const response = {
-    user: {
-      id,
-      email,
-      firstName,
-      lastName,
-    },
     token: jwt.sign({ id }, SECRET, {
       expiresIn: '1h',
     }),

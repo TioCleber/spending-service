@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 
 import { createUserSchema, updateUserSchema } from '../schemas/userSchemas'
 import { paramsSchema } from '../schemas/paramsSchema'
-import { createUser, deleteUser, getUser, updateUser } from '../useCases/user'
+import { createUser, deleteUser, getUser, updateUser } from '../useCases/users'
 
 class UsersController {
   async create(req: FastifyRequest, rep: FastifyReply) {

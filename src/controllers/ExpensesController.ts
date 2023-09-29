@@ -1,10 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 
 import {
-  createExpenses,
-  deleteExpenses,
-  getExpenses,
-  updateExpenses,
+  createRecurringExpenses,
+  deleteRecurringExpenses,
+  getRecurringExpenses,
+  updateRecurringExpenses,
 } from '../useCases/expenses'
 
 import { expensesSchema, updateExpensesSchema } from '../schemas/expensesSchema'
@@ -16,19 +16,20 @@ class ExpensesController {
 
     const body = bodySchema.parse(req.body)
 
-    await createExpenses({ ...body, userId: req.id })
+    await createRecurringExpenses({ ...body, userId: req.id })
 
     return rep.status(201).send({ message: 'Expenses created.' })
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { categoriesId, fromDate, toDate } = searchSchema.parse(req.query)
+    const { categoriesId, fromDate, toDate, gt } = searchSchema.parse(req.query)
 
-    const { expenses } = await getExpenses({
+    const { expenses } = await getRecurringExpenses({
       id: req.id,
       categoryId: categoriesId,
       gte: fromDate,
       lt: toDate,
+      gt: gt ? Number(gt) : undefined,
     })
 
     return rep.status(200).send(expenses)
@@ -40,7 +41,7 @@ class ExpensesController {
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
 
-    await updateExpenses(id, body, req.id)
+    await updateRecurringExpenses(id, body)
 
     return rep.status(204).send()
   }
@@ -48,7 +49,7 @@ class ExpensesController {
   async delete(req: FastifyRequest, rep: FastifyReply) {
     const { id } = paramsSchema.parse(req.params)
 
-    await deleteExpenses(id, req.id)
+    await deleteRecurringExpenses(id)
 
     return rep.status(204).send()
   }

@@ -1,7 +1,10 @@
 export interface IExpenses {
   userId: string
   name: string
-  institution: string
+  installments?: number
+  missingInstallments?: number
+  payday?: string
+  establishmentsOrServices: string
   value: number
   date: string
   category?: string
@@ -9,7 +12,10 @@ export interface IExpenses {
 
 export interface IUpdateExpenses {
   name?: string
-  institution?: string
+  installments?: number
+  missingInstallments?: number
+  payday?: string
+  establishmentsOrServices?: string
   value?: number
   date?: string
   categoriesId?: string
@@ -20,4 +26,5 @@ export interface IGetExpenses {
   categoryId?: string | null
   lt?: string
   gte?: string
+  gt?: number
 }

@@ -1,4 +1,3 @@
-import { prisma } from '../database/prisma'
 import { FastifyRequest, FastifyReply } from 'fastify'
 
 import {
@@ -41,7 +40,7 @@ class SpendingController {
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
 
-    await updateSpending(id, body, req.id)
+    await updateSpending(id, body)
 
     return rep.status(204).send()
   }
@@ -49,7 +48,7 @@ class SpendingController {
   async delete(req: FastifyRequest, rep: FastifyReply) {
     const { id } = paramsSchema.parse(req.params)
 
-    await deleteSpending(id, req.id)
+    await deleteSpending(id)
 
     return rep.status(204).send()
   }

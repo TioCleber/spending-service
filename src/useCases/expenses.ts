@@ -1,40 +1,31 @@
 import { prisma } from '../database/prisma'
-import { updateUser } from './user'
-
-import { IExpenses, IGetExpenses, IUpdateExpenses } from '../types/IExpenses'
-import {
-  handleSubtractValues,
-  handleSumValues,
-  handleUpdateValues,
-} from '../utils/handleValues'
 import { createCategory } from './categories'
 
-export const createExpenses = async (body: IExpenses) => {
-  const { date, institution, name, userId, value, category } = body
+import { IExpenses, IGetExpenses, IUpdateExpenses } from '../types/IExpenses'
 
-  const expensesValue = await prisma.user.findUnique({
-    where: {
-      id: body.userId,
-    },
-    select: {
-      totalExpenses: true,
-    },
-  })
-
-  const totalExpensesValueUpdated = handleSumValues({
-    bodyValue: body.value,
-    userValue: expensesValue?.totalExpenses,
-  })
-
-  await updateUser(body.userId, { totalExpenses: totalExpensesValueUpdated })
+export const createRecurringExpenses = async (body: IExpenses) => {
+  const {
+    date,
+    establishmentsOrServices,
+    installments,
+    missingInstallments,
+    payday,
+    name,
+    userId,
+    value,
+    category,
+  } = body
 
   if (category) {
     const { res } = await createCategory(category)
 
-    await prisma.expenses.create({
+    await prisma.recurringExpenses.create({
       data: {
         date,
-        institution,
+        establishmentsOrServices,
+        installments,
+        missingInstallments,
+        payday,
         name,
         userId,
         value,
@@ -42,10 +33,13 @@ export const createExpenses = async (body: IExpenses) => {
       },
     })
   } else {
-    await prisma.expenses.create({
+    await prisma.recurringExpenses.create({
       data: {
         date,
-        institution,
+        establishmentsOrServices,
+        installments,
+        missingInstallments,
+        payday,
         name,
         userId,
         value,
@@ -54,22 +48,29 @@ export const createExpenses = async (body: IExpenses) => {
   }
 }
 
-export const getExpenses = async ({
+export const getRecurringExpenses = async ({
   id,
   categoryId,
   gte,
   lt,
+  gt,
 }: IGetExpenses) => {
-  const expenses = await prisma.expenses.findMany({
+  const expenses = await prisma.recurringExpenses.findMany({
     where: {
       OR: [
         {
           categoriesId: categoryId,
           userId: id,
+          missingInstallments: {
+            gt,
+          },
           date: {
             gte,
             lt,
           },
+        },
+        {
+          missingInstallments: null,
         },
       ],
     },
@@ -80,8 +81,10 @@ export const getExpenses = async ({
       id: true,
       date: true,
       name: true,
-      institution: true,
+      establishmentsOrServices: true,
       value: true,
+      installments: true,
+      missingInstallments: true,
       user: {
         select: {
           email: true,
@@ -95,83 +98,40 @@ export const getExpenses = async ({
   return { expenses }
 }
 
-export const updateExpenses = async (
+export const updateRecurringExpenses = async (
   id: string,
-  body: IUpdateExpenses,
-  userId: string
+  body: IUpdateExpenses
 ) => {
-  const { date, institution, name, value, categoriesId } = body
+  const {
+    date,
+    establishmentsOrServices,
+    name,
+    value,
+    categoriesId,
+    installments,
+    missingInstallments,
+    payday,
+  } = body
 
-  if (value) {
-    const expenses = await prisma.expenses.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        value: true,
-      },
-    })
-
-    const userTotalExpenses = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        totalExpenses: true,
-      },
-    })
-
-    const newTotalExpensesValue = handleUpdateValues({
-      bodyValue: value,
-      userTotal: userTotalExpenses?.totalExpenses,
-      value: expenses?.value,
-    })
-
-    await updateUser(userId, { totalExpenses: newTotalExpensesValue })
-
-    await prisma.expenses.update({
-      where: {
-        id,
-      },
-      data: { date, institution, name, value, categoriesId },
-    })
-  }
-
-  await prisma.expenses.update({
+  await prisma.recurringExpenses.update({
     where: {
       id,
     },
-    data: { date, institution, name, value, categoriesId },
+    data: {
+      date,
+      establishmentsOrServices,
+      name,
+      value,
+      categoriesId,
+      installments,
+      missingInstallments,
+      payday,
+    },
   })
 }
 
-export const deleteExpenses = async (id: string, userId: string) => {
-  const expenses = await prisma.expenses.findFirst({
-    where: {
-      id,
-    },
-    select: {
-      value: true,
-    },
-  })
-
-  const userTotalExpenses = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      totalExpenses: true,
-    },
-  })
-
-  const totalExpensesValueUpdated = handleSubtractValues({
-    userTotal: userTotalExpenses?.totalExpenses,
-    value: expenses?.value,
-  })
-
-  await updateUser(userId, { totalExpenses: totalExpensesValueUpdated })
-
-  await prisma.spending.delete({
+export const deleteRecurringExpenses = async (id: string) => {
+  await prisma.recurringExpenses.delete({
     where: {
       id,
     },

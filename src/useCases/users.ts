@@ -2,32 +2,32 @@ import { prisma } from '../database/prisma'
 import bcrypt from 'bcryptjs'
 
 import { IUpdateUser, IUser } from '../types/IUser'
+import { StatusCodeError } from '../utils/handleErrors'
 
 export const createUser = async (body: IUser) => {
-  const userExists = await prisma.user.findFirst({
+  const userExists = await prisma.users.findFirst({
     where: {
       email: body.email,
     },
   })
 
   if (userExists) {
-    throw new Error('User already exists.')
+    throw new StatusCodeError('User already exists.', 409)
   }
 
   const passwordHash = await bcrypt.hash(body.password, 8)
 
-  await prisma.user.create({
+  await prisma.users.create({
     data: { ...body, password: passwordHash },
   })
 }
 
 export const getUser = async (id: string) => {
-  const user = await prisma.user.findFirstOrThrow({
+  const user = await prisma.users.findFirstOrThrow({
     where: {
       id,
     },
     select: {
-      id: true,
       firstName: true,
       lastName: true,
       email: true,
@@ -40,11 +40,11 @@ export const getUser = async (id: string) => {
           flags: true,
         },
       },
-      expenses: {
+      recurringExpenses: {
         select: {
           id: true,
           name: true,
-          institution: true,
+          establishmentsOrServices: true,
           date: true,
           value: true,
         },
@@ -58,10 +58,9 @@ export const getUser = async (id: string) => {
         select: {
           id: true,
           name: true,
-          institution: true,
+          establishmentsOrServices: true,
           date: true,
           value: true,
-          paymentMethod: true,
         },
         skip: 0,
         take: 3,
@@ -73,7 +72,7 @@ export const getUser = async (id: string) => {
         select: {
           id: true,
           name: true,
-          institution: true,
+          establishmentsOrServices: true,
           date: true,
           value: true,
         },
@@ -87,7 +86,6 @@ export const getUser = async (id: string) => {
   })
 
   const response = {
-    id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
@@ -96,7 +94,7 @@ export const getUser = async (id: string) => {
     flag: user.flags?.flags ?? null,
     expenses: {
       total: user.totalExpenses,
-      allExpenses: [...user.expenses],
+      allExpenses: [...user.recurringExpenses],
     },
     spending: {
       total: user.totalSpent,
@@ -109,7 +107,7 @@ export const getUser = async (id: string) => {
 }
 
 export const updateUser = async (id: string, body: IUpdateUser) => {
-  await prisma.user.update({
+  await prisma.users.update({
     where: {
       id,
     },
@@ -118,7 +116,7 @@ export const updateUser = async (id: string, body: IUpdateUser) => {
 }
 
 export const deleteUser = async (id: string) => {
-  await prisma.user.delete({
+  await prisma.users.delete({
     where: {
       id,
     },

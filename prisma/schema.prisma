@@ -10,80 +10,94 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String     @id @default(uuid())
+model Users {
+  id            String  @id @default(uuid())
   firstName     String
   lastName      String?
-  email         String     @unique
+  email         String  @unique
   password      String
-  salary        Float      @default(0)
-  moneySaved    Float      @default(0)
-  totalSpent    Float      @default(0)
-  totalExpenses Float      @default(0)
-  totalEarnings Float      @default(0)
+  salary        Float   @default(0)
+  moneySaved    Float   @default(0)
+  totalSpent    Float   @default(0)
+  totalExpenses Float   @default(0)
+  totalEarnings Float   @default(0)
   flagsId       String?
-  flags         Flags?     @relation(fields: [flagsId], references: [id])
-  spending      Spending[]
-  expenses      Expenses[]
-  earnings      Earnings[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @default(now())
+
+  flags             Flags?              @relation(fields: [flagsId], references: [id])
+  spending          Spending[]
+  recurringExpenses RecurringExpenses[]
+  earnings          Earnings[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Spending {
-  id            String      @id @default(uuid())
-  userId        String
-  name          String
-  institution   String
-  paymentMethod String
-  value         Float
-  date          DateTime
-  categoriesId  String?
-  category      Categories? @relation(fields: [categoriesId], references: [id])
-  user          User        @relation(fields: [userId], references: [id])
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @default(now())
+  id                       String   @id @default(uuid())
+  userId                   String
+  name                     String
+  establishmentsOrServices String
+  value                    Float
+  date                     DateTime
+  categoriesId             String?
+
+  category Categories? @relation(fields: [categoriesId], references: [id])
+  user     Users       @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
-model Expenses {
-  id           String      @id @default(uuid())
-  userId       String
-  name         String
-  institution  String
-  value        Float
-  date         DateTime
-  categoriesId String?
-  category     Categories? @relation(fields: [categoriesId], references: [id])
-  user         User        @relation(fields: [userId], references: [id])
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @default(now())
+model RecurringExpenses {
+  id                       String    @id @default(uuid())
+  userId                   String
+  name                     String
+  establishmentsOrServices String
+  value                    Float
+  date                     DateTime?
+  payday                   String?
+  installments             Int?
+  missingInstallments      Int?
+  categoriesId             String?
+
+  category Categories? @relation(fields: [categoriesId], references: [id])
+  user     Users       @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Earnings {
-  id          String   @id @default(uuid())
-  userId      String
-  name        String
-  value       Float
-  institution String
-  date        DateTime
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  id                       String   @id @default(uuid())
+  userId                   String
+  name                     String
+  value                    Float
+  establishmentsOrServices String
+  date                     DateTime
+
+  user Users @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Flags {
-  id        String   @id @default(uuid())
-  flags     String
-  user      User[]
+  id    String @id @default(uuid())
+  flags String
+
+  user Users[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
 model Categories {
-  id        String     @id @default(uuid())
-  name      String
-  spending  Spending[]
-  expenses  Expenses[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
+  id   String @id @default(uuid())
+  name String
+
+  spending          Spending[]
+  recurringExpenses RecurringExpenses[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }

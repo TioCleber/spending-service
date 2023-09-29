@@ -1,14 +1,14 @@
 export interface IEarnings {
   userId: string
   name: string
-  institution: string
+  establishmentsOrServices: string
   value: number
   date: string
 }
 
 export interface IUpdateEarnings {
   name?: string
-  institution?: string
+  establishmentsOrServices?: string
   value: number
   date?: string
 }

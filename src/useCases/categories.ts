@@ -28,7 +28,7 @@ export const getSpendingCategory = async (id: string) => {
 export const getExpensesCategory = async (id: string) => {
   const expensesCategories = await prisma.categories.findMany({
     where: {
-      expenses: {
+      recurringExpenses: {
         some: {
           userId: id,
         },
