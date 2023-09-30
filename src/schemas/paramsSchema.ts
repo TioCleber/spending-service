@@ -9,4 +9,6 @@ export const searchSchema = z.object({
   fromDate: z.string().optional(),
   toDate: z.string().optional(),
   gt: z.string().optional(),
+  perPage: z.string().optional(),
+  page: z.string().optional(),
 })

@@ -1,4 +1,4 @@
-export interface IExpenses {
+export interface IRecurringExpenses {
   userId: string
   name: string
   installments?: number
@@ -10,7 +10,7 @@ export interface IExpenses {
   category?: string
 }
 
-export interface IUpdateExpenses {
+export interface IUpdateRecurringExpenses {
   name?: string
   installments?: number
   missingInstallments?: number
@@ -21,10 +21,12 @@ export interface IUpdateExpenses {
   categoriesId?: string
 }
 
-export interface IGetExpenses {
+export interface IGetRecurringExpenses {
   id: string
   categoryId?: string | null
   lt?: string
   gte?: string
   gt?: number
+  perPage?: number
+  page?: number
 }

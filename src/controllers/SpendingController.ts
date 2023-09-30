@@ -22,16 +22,19 @@ class SpendingController {
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { categoriesId, fromDate, toDate } = searchSchema.parse(req.query)
+    const { categoriesId, fromDate, toDate, page, perPage } =
+      searchSchema.parse(req.query)
 
-    const { spending } = await getSpending({
+    const { spending, currentPage, pages, totalItems } = await getSpending({
       id: req.id,
       categoryId: categoriesId,
       gte: fromDate,
       lt: toDate,
+      page: page ? Number(page) : undefined,
+      perPage: perPage ? Number(perPage) : undefined,
     })
 
-    return rep.status(200).send(spending)
+    return rep.status(200).send({ spending, currentPage, pages, totalItems })
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {

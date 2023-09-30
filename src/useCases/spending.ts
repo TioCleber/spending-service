@@ -37,7 +37,32 @@ export const getSpending = async ({
   categoryId,
   gte,
   lt,
+  page,
+  perPage,
 }: IGetSpending) => {
+  const totalItems = await prisma.spending.count({
+    where: {
+      OR: [
+        {
+          categoriesId: categoryId,
+          userId: id,
+          date: {
+            gte,
+            lt,
+          },
+        },
+      ],
+    },
+  })
+
+  const totalItemsPerPage = perPage ?? totalItems
+
+  const currentPage = page ?? 1
+
+  const totalPages = Math.ceil(totalItems / totalItemsPerPage)
+
+  const skip = (currentPage - 1) * totalItemsPerPage
+
   const spending = await prisma.spending.findMany({
     where: {
       OR: [
@@ -54,6 +79,8 @@ export const getSpending = async ({
     orderBy: {
       date: 'desc',
     },
+    take: perPage,
+    skip,
     select: {
       id: true,
       date: true,
@@ -71,7 +98,7 @@ export const getSpending = async ({
     },
   })
 
-  return { spending }
+  return { spending, currentPage, pages: totalPages, totalItems }
 }
 
 export const updateSpending = async (id: string, body: IUpdateSpending) => {

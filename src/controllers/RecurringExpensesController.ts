@@ -5,14 +5,17 @@ import {
   deleteRecurringExpenses,
   getRecurringExpenses,
   updateRecurringExpenses,
-} from '../useCases/expenses'
+} from '../useCases/recurringExpenses'
 
-import { expensesSchema, updateExpensesSchema } from '../schemas/expensesSchema'
+import {
+  recurringExpensesSchema,
+  updateRecurringExpensesSchema,
+} from '../schemas/recurringExpensesSchema'
 import { paramsSchema, searchSchema } from '../schemas/paramsSchema'
 
-class ExpensesController {
+class RecurringExpensesController {
   async create(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = expensesSchema
+    const bodySchema = recurringExpensesSchema
 
     const body = bodySchema.parse(req.body)
 
@@ -22,21 +25,27 @@ class ExpensesController {
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { categoriesId, fromDate, toDate, gt } = searchSchema.parse(req.query)
+    const { categoriesId, fromDate, toDate, gt, page, perPage } =
+      searchSchema.parse(req.query)
 
-    const { expenses } = await getRecurringExpenses({
-      id: req.id,
-      categoryId: categoriesId,
-      gte: fromDate,
-      lt: toDate,
-      gt: gt ? Number(gt) : undefined,
-    })
+    const { recurringExpenses, currentPage, pages, totalItems } =
+      await getRecurringExpenses({
+        id: req.id,
+        categoryId: categoriesId,
+        gte: fromDate,
+        lt: toDate,
+        gt: gt ? Number(gt) : undefined,
+        page: page ? Number(page) : undefined,
+        perPage: perPage ? Number(perPage) : undefined,
+      })
 
-    return rep.status(200).send(expenses)
+    return rep
+      .status(200)
+      .send({ recurringExpenses, currentPage, pages, totalItems })
   }
 
   async put(req: FastifyRequest, rep: FastifyReply) {
-    const bodySchema = updateExpensesSchema
+    const bodySchema = updateRecurringExpensesSchema
 
     const { id } = paramsSchema.parse(req.params)
     const body = bodySchema.parse(req.body)
@@ -55,4 +64,4 @@ class ExpensesController {
   }
 }
 
-export default new ExpensesController()
+export default new RecurringExpensesController()

@@ -1,9 +1,13 @@
 import { prisma } from '../database/prisma'
 import { createCategory } from './categories'
 
-import { IExpenses, IGetExpenses, IUpdateExpenses } from '../types/IExpenses'
+import {
+  IRecurringExpenses,
+  IGetRecurringExpenses,
+  IUpdateRecurringExpenses,
+} from '../types/IRecurringExpenses'
 
-export const createRecurringExpenses = async (body: IExpenses) => {
+export const createRecurringExpenses = async (body: IRecurringExpenses) => {
   const {
     date,
     establishmentsOrServices,
@@ -54,8 +58,10 @@ export const getRecurringExpenses = async ({
   gte,
   lt,
   gt,
-}: IGetExpenses) => {
-  const expenses = await prisma.recurringExpenses.findMany({
+  page,
+  perPage,
+}: IGetRecurringExpenses) => {
+  const totalItems = await prisma.recurringExpenses.count({
     where: {
       OR: [
         {
@@ -74,6 +80,37 @@ export const getRecurringExpenses = async ({
         },
       ],
     },
+  })
+
+  const totalItemsPerPage = perPage ?? totalItems
+
+  const currentPage = page ?? 1
+
+  const totalPages = Math.ceil(totalItems / totalItemsPerPage)
+
+  const skip = (currentPage - 1) * totalItemsPerPage
+
+  const recurringExpenses = await prisma.recurringExpenses.findMany({
+    where: {
+      OR: [
+        {
+          categoriesId: categoryId,
+          userId: id,
+          missingInstallments: {
+            gt,
+          },
+          date: {
+            gte,
+            lt,
+          },
+        },
+        {
+          missingInstallments: null,
+        },
+      ],
+    },
+    take: perPage,
+    skip,
     orderBy: {
       date: 'desc',
     },
@@ -95,12 +132,12 @@ export const getRecurringExpenses = async ({
     },
   })
 
-  return { expenses }
+  return { recurringExpenses, currentPage, pages: totalPages, totalItems }
 }
 
 export const updateRecurringExpenses = async (
   id: string,
-  body: IUpdateExpenses
+  body: IUpdateRecurringExpenses
 ) => {
   const {
     date,

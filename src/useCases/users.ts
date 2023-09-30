@@ -1,8 +1,8 @@
 import { prisma } from '../database/prisma'
+import { StatusCodeError } from '../utils/handleErrors'
 import bcrypt from 'bcryptjs'
 
 import { IUpdateUser, IUser } from '../types/IUser'
-import { StatusCodeError } from '../utils/handleErrors'
 
 export const createUser = async (body: IUser) => {
   const userExists = await prisma.users.findFirst({
@@ -23,6 +23,13 @@ export const createUser = async (body: IUser) => {
 }
 
 export const getUser = async (id: string) => {
+  const date = new Date()
+  const monthId = date.getMonth()
+  const year = date.getFullYear()
+
+  const toDate = new Date(`${year}/${monthId + 2}/01`)
+  const fromDate = new Date(`${year}/${monthId + 1}/01`)
+
   const user = await prisma.users.findFirstOrThrow({
     where: {
       id,
@@ -33,14 +40,18 @@ export const getUser = async (id: string) => {
       email: true,
       moneySaved: true,
       salary: true,
-      totalExpenses: true,
-      totalSpent: true,
       flags: {
         select: {
           flags: true,
         },
       },
       recurringExpenses: {
+        where: {
+          date: {
+            gte: fromDate.toISOString(),
+            lt: toDate.toISOString(),
+          },
+        },
         select: {
           id: true,
           name: true,
@@ -55,20 +66,12 @@ export const getUser = async (id: string) => {
         },
       },
       spending: {
-        select: {
-          id: true,
-          name: true,
-          establishmentsOrServices: true,
-          date: true,
-          value: true,
+        where: {
+          date: {
+            gte: fromDate.toISOString(),
+            lt: toDate.toISOString(),
+          },
         },
-        skip: 0,
-        take: 3,
-        orderBy: {
-          date: 'desc',
-        },
-      },
-      earnings: {
         select: {
           id: true,
           name: true,
@@ -92,15 +95,8 @@ export const getUser = async (id: string) => {
     moneySaved: user.moneySaved,
     salary: user.salary,
     flag: user.flags?.flags ?? null,
-    expenses: {
-      total: user.totalExpenses,
-      allExpenses: [...user.recurringExpenses],
-    },
-    spending: {
-      total: user.totalSpent,
-      allSpent: [...user.spending],
-    },
-    earnings: user.earnings,
+    recurringExpenses: user.recurringExpenses,
+    spending: user.spending,
   }
 
   return { user: response }

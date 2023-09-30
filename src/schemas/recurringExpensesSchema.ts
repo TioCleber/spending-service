@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const expensesSchema = z.object({
+export const recurringExpensesSchema = z.object({
   name: z.string(),
   installments: z.number().optional(),
   missingInstallments: z.number().optional(),
@@ -11,7 +11,7 @@ export const expensesSchema = z.object({
   category: z.string().optional(),
 })
 
-export const updateExpensesSchema = z.object({
+export const updateRecurringExpensesSchema = z.object({
   name: z.string().optional(),
   installments: z.number().optional(),
   missingInstallments: z.number().optional(),

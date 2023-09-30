@@ -1,6 +1,7 @@
-import jwt from 'jsonwebtoken'
+import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from 'fastify'
+import jwt from 'jsonwebtoken'
+
 import { SECRET } from '../config/config'
 
 interface TokenPayload {

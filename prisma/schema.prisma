@@ -11,22 +11,18 @@ datasource db {
 }
 
 model Users {
-  id            String  @id @default(uuid())
-  firstName     String
-  lastName      String?
-  email         String  @unique
-  password      String
-  salary        Float   @default(0)
-  moneySaved    Float   @default(0)
-  totalSpent    Float   @default(0)
-  totalExpenses Float   @default(0)
-  totalEarnings Float   @default(0)
-  flagsId       String?
+  id         String  @id @default(uuid())
+  firstName  String
+  lastName   String?
+  email      String  @unique
+  password   String
+  salary     Float   @default(0)
+  moneySaved Float   @default(0)
+  flagsId    String?
 
   flags             Flags?              @relation(fields: [flagsId], references: [id])
   spending          Spending[]
   recurringExpenses RecurringExpenses[]
-  earnings          Earnings[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -62,20 +58,6 @@ model RecurringExpenses {
 
   category Categories? @relation(fields: [categoriesId], references: [id])
   user     Users       @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-}
-
-model Earnings {
-  id                       String   @id @default(uuid())
-  userId                   String
-  name                     String
-  value                    Float
-  establishmentsOrServices String
-  date                     DateTime
-
-  user Users @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())

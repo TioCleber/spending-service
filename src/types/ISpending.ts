@@ -20,4 +20,6 @@ export interface IGetSpending {
   categoryId?: string | null
   lt?: string
   gte?: string
+  perPage?: number
+  page?: number
 }
