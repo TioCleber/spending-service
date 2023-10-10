@@ -1,5 +1,6 @@
 import { prisma } from '../database/prisma'
 import { createCategory } from './categories'
+import { handleFields } from '../utils/handleFields'
 
 import { IGetSpending, ISpending, IUpdateSpending } from '../types/ISpending'
 
@@ -39,6 +40,7 @@ export const getSpending = async ({
   lt,
   page,
   perPage,
+  fields,
 }: IGetSpending) => {
   const totalItems = await prisma.spending.count({
     where: {
@@ -63,6 +65,8 @@ export const getSpending = async ({
 
   const skip = (currentPage - 1) * totalItemsPerPage
 
+  const select = handleFields(fields)
+
   const spending = await prisma.spending.findMany({
     where: {
       OR: [
@@ -81,21 +85,7 @@ export const getSpending = async ({
     },
     take: perPage,
     skip,
-    select: {
-      id: true,
-      date: true,
-      name: true,
-      establishmentsOrServices: true,
-      value: true,
-      categoriesId: true,
-      user: {
-        select: {
-          email: true,
-          firstName: true,
-          lastName: true,
-        },
-      },
-    },
+    select,
   })
 
   return { spending, currentPage, pages: totalPages, totalItems }

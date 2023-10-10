@@ -29,4 +29,5 @@ export interface IGetRecurringExpenses {
   gt?: number
   perPage?: number
   page?: number
+  fields?: string
 }

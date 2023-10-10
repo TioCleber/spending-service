@@ -11,4 +11,5 @@ export const searchSchema = z.object({
   gt: z.string().optional(),
   perPage: z.string().optional(),
   page: z.string().optional(),
+  fields: z.string().optional(),
 })

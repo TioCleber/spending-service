@@ -25,7 +25,7 @@ class RecurringExpensesController {
   }
 
   async get(req: FastifyRequest, rep: FastifyReply) {
-    const { categoriesId, fromDate, toDate, gt, page, perPage } =
+    const { categoriesId, fromDate, toDate, gt, page, perPage, fields } =
       searchSchema.parse(req.query)
 
     const { recurringExpenses, currentPage, pages, totalItems } =
@@ -37,6 +37,7 @@ class RecurringExpensesController {
         gt: gt ? Number(gt) : undefined,
         page: page ? Number(page) : undefined,
         perPage: perPage ? Number(perPage) : undefined,
+        fields,
       })
 
     return rep

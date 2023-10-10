@@ -14,7 +14,7 @@ class App {
       logger: true,
     })
 
-    this.errors()
+    this.app.server.timeout = 10000
     this.routes()
   }
 

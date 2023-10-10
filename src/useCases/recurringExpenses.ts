@@ -1,5 +1,6 @@
 import { prisma } from '../database/prisma'
 import { createCategory } from './categories'
+import { handleFields } from '../utils/handleFields'
 
 import {
   IRecurringExpenses,
@@ -60,6 +61,7 @@ export const getRecurringExpenses = async ({
   gt,
   page,
   perPage,
+  fields,
 }: IGetRecurringExpenses) => {
   const totalItems = await prisma.recurringExpenses.count({
     where: {
@@ -90,6 +92,8 @@ export const getRecurringExpenses = async ({
 
   const skip = (currentPage - 1) * totalItemsPerPage
 
+  const select = handleFields(fields)
+
   const recurringExpenses = await prisma.recurringExpenses.findMany({
     where: {
       OR: [
@@ -114,22 +118,7 @@ export const getRecurringExpenses = async ({
     orderBy: {
       date: 'desc',
     },
-    select: {
-      id: true,
-      date: true,
-      name: true,
-      establishmentsOrServices: true,
-      value: true,
-      installments: true,
-      missingInstallments: true,
-      user: {
-        select: {
-          email: true,
-          firstName: true,
-          lastName: true,
-        },
-      },
-    },
+    select,
   })
 
   return { recurringExpenses, currentPage, pages: totalPages, totalItems }

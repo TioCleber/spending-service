@@ -22,4 +22,5 @@ export interface IGetSpending {
   gte?: string
   perPage?: number
   page?: number
+  fields?: string
 }
