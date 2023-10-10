@@ -1,6 +1,7 @@
 export interface ISpending {
   userId: string
   name: string
+  categoriesId?: string
   establishmentsOrServices: string
   value: number
   date: string

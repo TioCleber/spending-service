@@ -9,6 +9,7 @@ export const recurringExpensesSchema = z.object({
   value: z.number(),
   date: z.string(),
   category: z.string().optional(),
+  categoriesId: z.string().optional(),
 })
 
 export const updateRecurringExpensesSchema = z.object({

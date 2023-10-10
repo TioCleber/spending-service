@@ -2,6 +2,7 @@ import fastify, { FastifyInstance } from 'fastify'
 
 import Routes from './routes'
 import cors from '@fastify/cors'
+import rateLimit from '@fastify/rate-limit'
 
 import { handleCors } from './utils/handlerCors'
 import { handleErrors } from './utils/handleErrors'
@@ -14,7 +15,8 @@ class App {
       logger: true,
     })
 
-    this.app.server.timeout = 10000
+    this.timeout()
+    this.rateLimit()
     this.routes()
   }
 
@@ -30,6 +32,17 @@ class App {
 
   errors() {
     this.app.setErrorHandler(handleErrors)
+  }
+
+  timeout() {
+    this.app.server.timeout = 15000
+  }
+
+  rateLimit() {
+    this.app.register(rateLimit, {
+      max: 10,
+      timeWindow: 60 * 1000,
+    })
   }
 
   listen() {

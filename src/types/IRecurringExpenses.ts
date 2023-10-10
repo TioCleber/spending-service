@@ -1,6 +1,7 @@
 export interface IRecurringExpenses {
   userId: string
   name: string
+  categoriesId?: string
   installments?: number
   missingInstallments?: number
   payday?: string

@@ -14,10 +14,6 @@ export const handleErrors = (
   _request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  if (error instanceof Error && error.code === 'FST_ERR_ID_GEN_TIMED_OUT') {
-    reply.status(504).send({ error: 'Error Timeout.' })
-  }
-
   return reply
     .status(error.statusCode ?? 500)
     .send({ error: error.message ?? 'Internal Error.' })

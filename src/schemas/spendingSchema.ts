@@ -6,6 +6,7 @@ export const spendingSchema = z.object({
   value: z.number(),
   date: z.string(),
   category: z.string().optional(),
+  categoriesId: z.string().optional(),
 })
 
 export const updateSpendingSchema = z.object({

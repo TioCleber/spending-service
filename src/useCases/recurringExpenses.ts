@@ -19,38 +19,24 @@ export const createRecurringExpenses = async (body: IRecurringExpenses) => {
     userId,
     value,
     category,
+    categoriesId,
   } = body
 
-  if (category) {
-    const { res } = await createCategory(category)
+  const resCategory = category && (await createCategory(category))
 
-    await prisma.recurringExpenses.create({
-      data: {
-        date,
-        establishmentsOrServices,
-        installments,
-        missingInstallments,
-        payday,
-        name,
-        userId,
-        value,
-        categoriesId: res.id,
-      },
-    })
-  } else {
-    await prisma.recurringExpenses.create({
-      data: {
-        date,
-        establishmentsOrServices,
-        installments,
-        missingInstallments,
-        payday,
-        name,
-        userId,
-        value,
-      },
-    })
-  }
+  await prisma.recurringExpenses.create({
+    data: {
+      date,
+      establishmentsOrServices,
+      installments,
+      missingInstallments,
+      payday,
+      name,
+      userId,
+      value,
+      categoriesId: resCategory ? resCategory.res.id : categoriesId,
+    },
+  })
 }
 
 export const getRecurringExpenses = async ({

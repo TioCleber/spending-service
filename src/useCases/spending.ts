@@ -5,32 +5,28 @@ import { handleFields } from '../utils/handleFields'
 import { IGetSpending, ISpending, IUpdateSpending } from '../types/ISpending'
 
 export const createSpending = async (body: ISpending) => {
-  const { date, establishmentsOrServices, name, userId, value, category } = body
+  const {
+    date,
+    establishmentsOrServices,
+    name,
+    userId,
+    value,
+    category,
+    categoriesId,
+  } = body
 
-  if (category) {
-    const { res } = await createCategory(category)
+  const resCategory = category && (await createCategory(category))
 
-    await prisma.spending.create({
-      data: {
-        date,
-        establishmentsOrServices,
-        name,
-        userId,
-        value,
-        categoriesId: res.id,
-      },
-    })
-  } else {
-    await prisma.spending.create({
-      data: {
-        date,
-        establishmentsOrServices,
-        name,
-        userId,
-        value,
-      },
-    })
-  }
+  await prisma.spending.create({
+    data: {
+      date,
+      categoriesId: resCategory ? resCategory.res.id : categoriesId,
+      establishmentsOrServices,
+      name,
+      userId,
+      value,
+    },
+  })
 }
 
 export const getSpending = async ({
