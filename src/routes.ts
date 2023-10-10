@@ -40,6 +40,10 @@ class Routes {
       { preHandler: [authentication] },
       CategoriesController.get
     )
+
+    app.get('/', (_res, rep) => {
+      return rep.status(200).send('Hello 🚀!')
+    })
   }
 
   post(app: FastifyInstance) {
