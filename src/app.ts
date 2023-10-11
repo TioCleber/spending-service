@@ -5,7 +5,7 @@ import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 
 import { handleCors } from './utils/handlerCors'
-import { handleErrors } from './utils/handleErrors'
+import { StatusCodeError, handleErrors } from './utils/handleErrors'
 
 class App {
   private app: FastifyInstance
@@ -13,6 +13,7 @@ class App {
   constructor() {
     this.app = fastify({
       logger: true,
+      connectionTimeout: 10000,
     })
 
     this.timeout()
@@ -35,12 +36,14 @@ class App {
   }
 
   timeout() {
-    this.app.server.timeout = 15000
+    this.app.addHook('onTimeout', async () => {
+      throw new StatusCodeError('Timeout Error.', 504)
+    })
   }
 
   rateLimit() {
     this.app.register(rateLimit, {
-      max: 10,
+      max: 100,
       timeWindow: 60 * 1000,
     })
   }
