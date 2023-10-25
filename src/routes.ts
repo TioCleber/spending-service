@@ -7,6 +7,7 @@ import RecurringExpensesController from './controllers/RecurringExpensesControll
 import CategoriesController from './controllers/CategoriesController'
 
 import { authentication } from './middlewares/'
+import TotalsController from './controllers/TotalsController'
 
 class Routes {
   async init(app: FastifyInstance) {
@@ -39,6 +40,12 @@ class Routes {
       '/v1/pvt/categories',
       { preHandler: [authentication] },
       CategoriesController.get
+    )
+
+    app.get(
+      '/v1/pvt/totals',
+      { preHandler: [authentication] },
+      TotalsController.get
     )
 
     app.get('/', (_res, rep) => {
