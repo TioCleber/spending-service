@@ -13,7 +13,8 @@ class App {
   constructor() {
     this.app = fastify({
       logger: true,
-      connectionTimeout: 10000,
+      keepAliveTimeout: 10000,
+      requestTimeout: 5000,
     })
 
     this.timeout()
