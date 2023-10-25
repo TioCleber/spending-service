@@ -15,6 +15,7 @@ class App {
       logger: true,
       keepAliveTimeout: 10000,
       requestTimeout: 5000,
+      return503OnClosing: true,
     })
 
     this.timeout()
